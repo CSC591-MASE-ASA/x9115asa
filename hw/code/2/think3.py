@@ -1,6 +1,25 @@
 
+#hw2 exercise 4
+#version 1 of do twice with one argument
+def do_twice_1(f):
+    f()
+    f()
+#version 2 of do twice with one argument
+def do_twice_2(f, value):
+    f(value)
+    f(value)
+#simple print spam function as shown in exercise
 
-#hw2 exercise 3.2
+#print spam for part 1
+def print_spam():
+    print 'spam'
+#print spam for part 2
+def print_spam2(value):
+    print 'spam', value
+
+
+
+#hw2 exercise 3.5
 def exercise3_5(n):
     print 'Number of rows and columns: ', n
     for i in range((n-1)*5+1): 
@@ -18,5 +37,15 @@ def exercise3_5(n):
 
 # Main function. Put functions you want to all when script runs here
 if __name__ == '__main__':
+    print 'Exercise 3.4 Part 1: '
+    do_twice_1(print_spam)
+    print
+    print 'Exercise 3.4 Part 2: '
+    do_twice_2(print_spam2, 2)
+    print 'Exercise 3.5 Part 1: '
     exercise3_5(3)
+    print
+    print 'Exercise 3.5 Part 2: '
     exercise3_5(4)
+    
+    
