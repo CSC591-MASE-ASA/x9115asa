@@ -1,3 +1,13 @@
+#hw2 exercise 1
+def print_lyrics():
+    print "I'm a lumberjack, and I'm okay."
+    print "I sleep all night and I work all day."
+
+def repeat_lyrics():
+    print_lyrics()
+    print_lyrics()
+
+repeat_lyrics()
 
 #hw2 exercise 4
 #version 1 of do twice with one argument
@@ -16,6 +26,9 @@ def print_spam():
 #print spam for part 2
 def print_spam2(value):
     print 'spam', value
+#print_twice for part 3
+def print_twice(input_string):
+    print "input: ", input_string
 
 
 
