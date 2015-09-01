@@ -1,28 +1,8 @@
-"""This module contains code from
-Think Python by Allen B. Downey
-http://thinkpython.com
-
-Copyright 2012 Allen B. Downey
-License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
-
-"""
-
-try:
-    # see if Swampy is installed as a package
-    from swampy.TurtleWorld import *
-except ImportError:
-    # otherwise see if the modules are on the PYTHONPATH
-    from TurtleWorld import *
-
+from swampy.TurtleWorld import *
 from polygon import *
 
-
 def petal(t, r, angle):
-    """Draws a petal using two arcs.
-
-    t: Turtle
-    r: radius of the arcs
-    angle: angle (degrees) that subtends the arcs
+    """Draws a petal
     """
     for i in range(2):
         arc(t, r, angle)
@@ -31,11 +11,6 @@ def petal(t, r, angle):
 
 def flower(t, n, r, angle):
     """Draws a flower with n petals.
-
-    t: Turtle
-    n: number of petals
-    r: radius of the arcs
-    angle: angle (degrees) that subtends the arcs
     """
     for i in range(n):
         petal(t, r, angle)
@@ -43,8 +18,7 @@ def flower(t, n, r, angle):
 
 
 def move(t, length):
-    """Move Turtle (t) forward (length) units without leaving a trail.
-    Leaves the pen down.
+    """Move Turtle
     """
     pu(t)
     fd(t, length)
@@ -55,7 +29,7 @@ world = TurtleWorld()
 bob = Turtle()
 bob.delay = 0.01
 
-# draw a sequence of three flowers, as shown in the book.
+# draw 3 flowers.
 move(bob, -100)
 flower(bob, 7, 60.0, 60.0)
 
@@ -67,7 +41,6 @@ flower(bob, 20, 140.0, 20.0)
 
 die(bob)
 
-# dump the contents of the campus to the file canvas.eps
 world.canvas.dump()
 
 wait_for_user()
