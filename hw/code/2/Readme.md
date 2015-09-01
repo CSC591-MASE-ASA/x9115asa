@@ -18,3 +18,10 @@ Experimenting with function objects
 Drawing a grid  
 ![](https://raw.githubusercontent.com/CSC591-MASE-ASA/x9115asa/master/hw/code/2/ASEHw2-5.png)
 
+#### Exercise 4.2
+Drawing flowers  
+![](https://raw.githubusercontent.com/CSC591-MASE-ASA/x9115asa/master/hw/code/2/think4/_2.png)
+
+#### Exercise 4.3
+Drawing polygons  
+![](https://raw.githubusercontent.com/CSC591-MASE-ASA/x9115asa/master/hw/code/2/think4/_3.png)
