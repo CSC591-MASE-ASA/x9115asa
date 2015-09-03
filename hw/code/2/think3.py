@@ -1,14 +1,14 @@
 #hw2 exercise 1
-def print_lyrics():
-    print "I'm a lumberjack, and I'm okay."
-    print "I sleep all night and I work all day."
-
 def repeat_lyrics():
     print_lyrics()
     print_lyrics()
 
-
-
+def print_lyrics():
+    print "I'm a lumberjack, and I'm okay."
+    print "I sleep all night and I work all day."
+#hw2 exercise 3
+def right_justify(string):
+    print ' '*(70-len(string))+string
 #hw2 exercise 4
 #version 1 of do twice with one argument
 def do_twice_1(f):
@@ -59,6 +59,8 @@ if __name__ == '__main__':
     print 'Exercise 3.1: '
     repeat_lyrics()
     print
+    print 'Exercise 3.3'
+    right_justify('allen');
     print 'Exercise 3.4 Part 1: '
     do_twice_1(print_spam)
     print
