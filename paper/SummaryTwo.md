@@ -5,13 +5,13 @@ Whittle, Jon, Pete Sawyer, Nelly Bencomo, Betty HC Cheng, and Jean-Michel Bruel.
 ### Keywords
 
 * ii1 - **Non-invariant requirements** - Requirements that cannot be compromised or traded off for a variant requirement.
-* ii2 - **Uncertainty factors** - The environment and monitored proerties and their relations.
-* ii3 - **Fuzzy set** - A set whose members posess degress of membership and not necessarily boolean.
+* ii2 - **Uncertainty factors** - The environment and monitored properties and their relations.
+* ii3 - **Fuzzy set** - A set whose members posses degrees of membership and not necessarily boolean.
 * ii4 - **Dynamically Adaptive Systems (DAS)** - Systems that dynamically self-adapt to changing environment conditions.
 
 ### Feature Extraction
 
-* iii1- **New Results** - The authors of the paper have proposed and described a new languages for describing requirements for a self-adaptive system. This new requirement spicification language addresses the problem of describing requirements in a way to account for changing environment and runtime factors.
+* iii1- **New Results** - The authors of the paper have proposed and described a new language for describing requirements for a self-adaptive system. This new requirement specification language addresses the problem of describing requirements in a way to account for changing environment and runtime factors.
 
 
 * iii2 - **Tutorial Materials** - The authors include an in-depth walkthrough through a sample application problem domain. They instruct the readers in the procedure of applying the new *RELAX* language in specifying requirements for the system and accounting for the various uncertainties involved. By following this walk-through they propose, the *RELAX* language can be applied to other problem scenarios as well.
