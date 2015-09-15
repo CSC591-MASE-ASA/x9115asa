@@ -1,4 +1,9 @@
 ### Birthday paradox
+![image](img/birthday_paradox.png)
+
+Complete code:
+[code3.py](code3.py) 
+
 Command:
 ```
 python code3.py
@@ -13,6 +18,12 @@ Probability of birthday paradox = '0.729' for '1000' simulations, each of size '
 ```
 
 ### Employee
+![](img/Employee.png)
+
+Complete code:
+
+[employee.py](employee.py)
+
 Command:
 ```
 python employee.py
@@ -30,6 +41,13 @@ Sorted list:
 ```
 
 ### Poker
+![](img/poker.png)
+
+Complete code:
+
+  1. [Card.py](Card.py)
+  2. [PokerHand.py](PokerHand.py)
+
 Command:
 ```unix
 python PokerHand.py
