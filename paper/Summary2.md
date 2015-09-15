@@ -34,3 +34,7 @@ Whittle, Jon, Pete Sawyer, Nelly Bencomo, Betty HC Cheng, and Jean-Michel Bruel.
 2. iv2 - The authors should explore describing requirements at different levels. In the paper the authors have described requirements at the lowest level mapped to lowest level properties of the system. The authors can explore if and how higher level requirements can be described in the *RELAX* language to describe adaptive goals.
 
 3. iv3 - The sample application (AAL) is a smart home system which even though is a software system, heaviliy relies on hardware sensors for environment and monitored properties. However this is not true for many real world software. The authors should explore a system that relies on software signals as properties.
+
+#### Relation to Paper One
+
+The RELAX language proposed by the authors of this paper is an example of an implementation technique for the abstract runtime goal resolution concepts proposed in Paper One. The RELAX language allows goals to be specified in a way that complies with the idealogies proposed in Paper One by explicitly stating the variable properties and their relationships with each other and the goals. During runtime, these variables can be monitored for a effective assesment of goal satisfaction.
