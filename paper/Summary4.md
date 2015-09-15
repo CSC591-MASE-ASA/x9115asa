@@ -21,3 +21,11 @@ DeLoach, Scott A., and Matthew Miller. "A goal model for adaptive complex system
   1. Knowledge Acquisition in automated Specification (KAOS) framework - van Lamsweerde, A. and Letier, E. 2000. Handling Obstacles in Goal-Oriented Requirements Engineering. IEEE Trans. on Software Engineering. 26(10): 978-1005.
   2. i* Framework - Yu, E. 1995. Modeling Strategic Relationships for Process Reengineering. PhD thesis, University of Toronto.
   3. PRACTIONIST framework - Morreale, V., Bonura, S., Francaviglia, G., Centineo, F., Cossentino, M., and Gaglio, S. 2006. Goal-Oriented Development of BDI Agents: The PRACTIONIST Approach. In Proceedings of the IEEE/WIC/ACM international Conference on intelligent Agent Technology (IAT), 66-72. IEEE Computer Society.
+  
+* iii4 - **Motivational Statements** - The purpose of the paper, which the authors highlight in the beginning of it, is to allow a
+designer to specify goals during requirements and then use those same goals throughout system development and at runtime. Through the descriptions and walkthroughs that the authors have presented, they propose to have developed a model (GMoDS) for ensuring design time goals are translatable to runtime properties of the system.
+
+
+#### Improvements
+
+#### Relation to Paper One
