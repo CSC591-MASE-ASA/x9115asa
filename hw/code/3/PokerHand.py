@@ -53,11 +53,11 @@ class PokerHand(Hand):
 
     def has_four_of_a_kind(self):
         self.rank_hist()
-        print "Rank Hist"
-        print self.ranks
+        # print "Rank Hist"
+        # print self.ranks
         for val in self.ranks.values():
             if val >= 4:
-                print val
+                # print val
                 return True
         return False
 
@@ -76,26 +76,32 @@ class PokerHand(Hand):
         keys = self.ranks.keys()
         if 1 in self.ranks:
             keys.append(14)
-        print "Straight:",keys
+        # print "Straight:",keys
         return self.check_straight(keys)
 
     def check_straight(self, keys):
         keys.sort()
+        # print "keys",keys
         count = 0
         for i in xrange(1,15):
+            # print "i",i
             if i in keys:
+                # print "true"
                 count = count + 1
                 if count == 5:
                     return True
-                else:
-                    count = 0
+            else:
+                count = 0
+
         return False
 
     def has_full_house(self):
         self.rank_hist();
         fh_hist = {}
+        # print "rank hist",self.ranks
         for val in self.ranks.values():
             fh_hist[val] = fh_hist.get(val,0) + 1;
+        # print "fh_hist",fh_hist
         # print self.ranks
         # print fh_hist
         count3 = 0
@@ -103,13 +109,15 @@ class PokerHand(Hand):
         for key in fh_hist.keys():
             if key >= 3:
                  count3 = count3 + fh_hist[key]
+        # print "count3", count3
         if count3 >= 1:
-            count3 = count3 - 1
+            # count3 = count3 - 1
             return (count3 + fh_hist.get(2,0) >= 2)
         return False
 
     def has_straight_flush(self):
         self.sort()
+        # print "chacking straight flush"
         # print self.cards
         suit_rank_dict = {}
         for suit in xrange(4):
@@ -119,12 +127,15 @@ class PokerHand(Hand):
                     this_suite_ranks.append(card.rank)
             if this_suite_ranks:
                 suit_rank_dict[suit] = this_suite_ranks
-            print "This suite rank",suit,this_suite_ranks
-        print "Dict",suit_rank_dict
+            # print "This suite rank",suit,this_suite_ranks
+        # print "Dict",suit_rank_dict
         res = False
         for val in suit_rank_dict.values():
+            # print "val", val
             if 1 in val:
                 val.append(14)
+            # print "val2", val
+            # print "self.check_straight(val)",self.check_straight(val)
             res = res or self.check_straight(val)
         return res
 
@@ -181,8 +192,29 @@ if __name__ == '__main__':
                     "Straight", "Three of a kind", "Two pair","Pair"]
 
     class_hist = Hist(classification)
+    # hand = PokerHand()
+    # hand.set_classification(classification)
+    # c1 = Card(3,13)
+    # c2 = Card(2,12)
+    # c3 = Card(1,11)
+    # c4 = Card(3,7)
+    # c5 = Card(0,8)
+    # c6 = Card(1,7)
+    # c7 = Card(2,11)
+    # hand.add_card(c1)
+    # hand.add_card(c2)
+    # hand.add_card(c3)
+    # hand.add_card(c4)
+    # hand.add_card(c5)
+    # hand.add_card(c6)
+    # hand.add_card(c7)
+    # hand.sort()
+    # print hand;
+    # hand.classify()
+    # print hand.label
+
     labels = []
-    n = 1000
+    n = 10000
     for i1 in xrange(n):
     # make a deck
         deck = Deck()
@@ -194,12 +226,12 @@ if __name__ == '__main__':
             deck.move_cards(hand, 7)
             hand.sort()
             hand.set_classification(classification)
-            print "Hand",i
-            print hand
-            print "label"
+            # print "Hand",i
+            # print hand
+            # print "label"
             hand.classify()
             labels.append(hand.label)
-            print hand.label + "\n"
+            # print hand.label + "\n"
 
     for label in labels:
         class_hist.increment_count(label)
@@ -210,5 +242,5 @@ if __name__ == '__main__':
     print freq_hist
     for key in classification:
         frequency = freq_hist.get(key,0)
-        probability = frequency/total
+        probability = (frequency/total)*100
         print "probability for %s = %.2f" % (key, probability)

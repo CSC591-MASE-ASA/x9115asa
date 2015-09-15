@@ -11,12 +11,11 @@ class Employee:
         return "Name : {0}, age : {1}".format(self.name,self.age);
 
 
-e1 = Employee("Abc",25)
-e2 = Employee("Def",22)
-e3 = Employee("Hij",20)
+e1 = Employee("Alice",25)
+e2 = Employee("Dan",22)
+e3 = Employee("Bob",20)
 employee_list = [e1,e2,e3];
-
-print employee_list;
+print "Unsorted list: \n",employee_list;
 
 employee_list.sort();
-print "Sorted: ",employee_list;
+print "Sorted list: \n",employee_list;
