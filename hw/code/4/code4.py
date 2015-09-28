@@ -2,14 +2,14 @@ from __future__ import division
 import random, math
 
 class schaffer:
-    min = 10**10
+    min = 10.01**5
     max = -min
-    lower, upper = -100000, 100000
+    lower, upper = -10**5, 10**5
     def normalize(self, value):
         #print self.min, self.max
         return (value - self.min)/(self.max - self.min)
-    def denormalize(self, value):
-        return (self.max - self.min)*value + self.min
+    #def denormalize(self, value):
+    #    return (self.max - self.min)*value + self.min
     def gen_f1f2(self,val):
         return val**2, (val-2)**2
     
@@ -17,13 +17,13 @@ class schaffer:
         f1,f2 = self.gen_f1f2(value)
         return self.normalize(f1+f2)
     
-    def gen_x(self):
-        return random.randrange(self.lower, self.upper)
-    
+    def neighbor(self, s):
+        nb_range = int((max(math.fabs(s-self.lower), math.fabs(s-self.upper)))/4)
+        return random.randrange(int(s-nb_range), int(s+nb_range))
     
     def schaffer_minmax(self):
-        for i in range(100):
-            x = self.gen_x()
+        for i in range(1000):
+            x =  random.randrange(self.lower, self.upper)
             f1, f2 = self.gen_f1f2(x)
             sum = f1+f2
             if sum > self.max:
@@ -33,14 +33,17 @@ class schaffer:
         return self.min, self.max
     def simmulated_annealing(self, kmax=1000, cooling = 0.6):
         k=0
-        s = sb = self.gen_x()
+        print 
+        s = sb = random.randrange(self.lower, self.upper)
         e = eb = self.energy(s)
+        emax = -2
+        print 's0 = ', s
+        print 'e0 = ', e
         def P(old, new, t):
             val = (old-new)/t
-            return math.exp(val) > random.random()
-        while k < kmax:
-            
-            sn = self.gen_x()
+            return math.exp(val)
+        while k < kmax and e > emax:
+            sn = self.neighbor(s)
             en = self.energy(sn)
             if en < eb:
                 sb, eb = sn, en
@@ -48,13 +51,16 @@ class schaffer:
             if en < e:
                 s, e = sn, en
                 print '+',
-            elif P(e, en, (1-k/kmax)**cooling):
+            elif P(e, en, (1-k/kmax)) > random.random():
                 s, e = sn, en
                 print '?',
             print '.',
-            k +=1
             if k%25==0:
                 print '\n',
+                op = "%04d"%k+",%.2f"%en+", "
+                print op,
+            k +=1
+        print
         return eb, sb
 
 
