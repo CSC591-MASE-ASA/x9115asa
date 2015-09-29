@@ -46,20 +46,21 @@ def randomassign():
 def change_random_c(x,c):
     x_old = osyczka2(x)
     timer = 1000
+    no_evals = 0
     while timer > 0:
         x[c] = uniform(xlower[c],xup[c])
-        # print x[c]
+        no_evals += 1
         if constraints(x):
             break
         timer-=timer
 
     x_osyczka2 = osyczka2(x)
     if x_osyczka2 < x_old:
-        return "?", x
+        return "?", no_evals, x
     elif x_osyczka2 > x_old:
-        return "+", x
+        return "+", no_evals, x
     else:
-        return ".", x
+        return ".", no_evals, x
 
 
 # Given min to max values for every value, try steps of (max - min)/steps for, say, steps=10
@@ -67,16 +68,18 @@ def change_c_to_maximize(x,c,steps):
     x_best = x
     x_curr = x
     dx = (xup[c] - xlower[c])/float(steps)
+    no_evals = 0
     for i in xrange(0,steps):
+        no_evals += 1
         x_curr[c] = xlower[c] + dx*i
         if constraints(x_curr) and osyczka2(x_curr) > osyczka2(x_best):
             x_best = x_curr
 
     # print "RET",x,x_best
     if osyczka2(x) == osyczka2(x_best):
-        return ".", x
+        return ".", no_evals, x
     else:
-        return "+", x_best
+        return "+", no_evals, x_best
 
 def equals(x1,x2):
     res = (len(x1) == len(x2))
@@ -102,37 +105,38 @@ def equals(x1,x2):
 def max_walk_sat(maxtries,maxchanges,threshold,p,steps):
     evals = 0
     sb = randomassign()
+    total_evals = 0
+    print "best solution \t current solution"
     for i in xrange(0,maxtries):
         solution = randomassign()
         out = ""
 
-        # print "\n best = "+str(osyczka2(sb))
-
         for j in xrange(0,maxchanges):
-            # print "\n best = "+str(osyczka2(sb))
-            evals +=1
             stat = ""
             if osyczka2(solution) > threshold:
                 return solution
 
             c = randint(1,6)
             if p < random():
-                stat, solution = change_random_c(solution,c)
+                stat, evals, solution = change_random_c(solution,c)
 
             else:
-                stat, solution = change_c_to_maximize(solution,c,steps)
+                stat, evals, solution = change_c_to_maximize(solution,c,steps)
 
             if osyczka2(solution) > osyczka2(sb):
                 stat = "!"
                 sb = solution[:]
             out = out + stat
+            total_evals += evals
 
-        print str(osyczka2(sb))+"\t" +str(osyczka2(solution)) + "\t"+out
+        print str(osyczka2(sb))+"\t" +str(osyczka2(solution)) + "\t\t"+out
 
+    print "Parameters used maxtries={0}\t maxchanges={1}\t p={2}\t threshold={3}\t steps={4}".format(maxtries,maxchanges,p,threshold,steps)
+    print "Total evaluations: {0}".format(total_evals)
     print "Final solution: {0} \nFinal energy : {1}".format(sb[1:],osyczka2(sb))
 
-maxtries=1000
-maxchanges=60
+maxtries=500
+maxchanges=50
 p=0.5
 threshold=1000000
 steps=10
