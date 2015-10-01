@@ -43,6 +43,8 @@ proposes runtime requirements monitoring and repairing based on goal-oriented re
 
 The authors have provided a detailed explanation of the results derived from the experimental study performed to evaluate the hypothesis. The results of this experiment can be used as a baseline for future research in this area.
 
+![](Summary6-results.png)
+
 **iii3 Sample model**
 
 The current hypothesis is studied by implementing it in the form of a Java framework . A food preparing system in a socio-technical environment is chosen to evaluate the hypothesis. It is simulated suing AnyLogic, containing Java APIs to measure the effectiveness through several key performance indicators.
