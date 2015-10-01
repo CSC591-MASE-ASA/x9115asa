@@ -514,10 +514,10 @@ The program finds a solution that maximizes osyczka2
 
 Notations:
 
-! = new best solution found
+"!" = new best solution found
 
-+ = local solution better than current solution found
+"+" = local solution better than current solution found
 
-. = no new solution found
+"." = no new solution found
 
-? = solution found is worse that current
+"?" = solution found is worse that current
