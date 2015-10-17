@@ -2,7 +2,7 @@
 A. Ramirez, A. Jensen, and B. Cheng. 2012. A Taxonomy of Uncertainty for Dynamically Adaptive Systems. Software Engineering for Adaptive and Self-Managing Systems (SEAMS), 2012 ICSE Workshop.
 
 ### Keywords
-**ii1 Dynamically adaptive system (DAS) **
+**ii1 Dynamically adaptive system (DAS)**
 
 Self-reconfiguration enables a dynamically adaptive system (DAS) to satisfy requirements even as detrimental system and environmental conditions arise.
 
