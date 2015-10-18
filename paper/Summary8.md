@@ -40,7 +40,7 @@ The authors have provided a detailed description of the steps to keep in mind wh
 
 **iii3 Checklists**
 
-The authors provide a checklist in the form of a table summarizing the taxonony of uncertainity in a DAS.
+The authors provide a checklist in the form of a table summarizing the taxonomy of uncertainity in a DAS.
 
 **iii4 Future work**
 
@@ -50,7 +50,7 @@ Towards the end of the paper , the authors point the need to include integrating
 
 **iv1 Baseline results** :
 
-This paper only provides a definition and taxonomy of the uncertainity in a DAS. This methodology has not been actually implemented on a system to obtain any kind of statistical results that could be conidered as a baseline for future studies.
+This paper only provides a definition and taxonomy of the uncertainity in a DAS. This methodology has not been actually implemented on a system to obtain any kind of statistical results that could be considered as a baseline for future studies.
 
 **iv2 Tutorial materials** :
 
