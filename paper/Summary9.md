@@ -20,3 +20,24 @@ The evidence node E<sub>t</sub> represents the information observed by monitorab
 
 ### Feature Extraction
 **iii1 Related Work**
+1. Uncertainty for Self-Adaptation  
+  * N. Esfahani, K. Razavi, and S. Malek, “Dealing with uncertainty in early software architecture,” in Proceedings of the ACM SIGSOFT 20th International Symposium on the Foundations of Software Engineering, ser. FSE ’12. New York, NY, USA: ACM, 2012, pp. 21:1–21:4.
+
+  * P. Sawyer, N. Bencomo, E. Letier, and A. Finkelstein, “Requirementsaware systems: A research agenda for re self-adaptive systems,” in Proc. of the 18th IEEE International Requirements Engineering Conference, 2010, pp. 95–103.
+
+2. Decision-Making under Bayesian Theory
+  * L. Portinale and D. C. Raiteri, “Using dynamic decision networks and
+extended fault trees for autonomous fdir,” in ICTAI, 2011, pp. 480–484.
+
+
+**iii2 Baseline results**
+
+The paper describes the procedure and provides results for applying the Dynamic Decision Network methodology to the Remote Data Mirroring application. It features the process of analysis of the problem domain in the DDN terms, deriving a Bayesian Network that describes the Functional and Non-Functional Requirements and providing the results of application of the same. This procedure and results can be used as comparison in other applications.
+
+**iii3 Informative visualizations**
+
+The authors provide useful visualizations of the system in effect and how the decisions made by the DDNs vary over time w.r.t. a system hat does not dynamically adapt to changing environmental factors.
+
+**iii4 Future work**
+
+The authors want to investigate how the DDN system can be applied to quanititative requirements and dealing with confidence intervals for given targets. Another proposed study is looking into how changes in the probabilities themselves affects the system and how they vary over time. They also suggest that development of tools to help design DDNs for be a beneficial effort to make.
