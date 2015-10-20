@@ -41,3 +41,20 @@ The authors provide useful visualizations of the system in effect and how the de
 **iii4 Future work**
 
 The authors want to investigate how the DDN system can be applied to quanititative requirements and dealing with confidence intervals for given targets. Another proposed study is looking into how changes in the probabilities themselves affects the system and how they vary over time. They also suggest that development of tools to help design DDNs for be a beneficial effort to make.
+
+### Improvement possibilities
+
+**iv1 Patterns & Anti-Patterns** :
+
+Since the paper attempts to address a new approach to define Dynamic Decision Network, the authors should investigate and present various ways in which the methodology can be effectively used and possibly abused.
+
+**iv2 Sampling Procedures ** :
+
+The authors should outline how they went about evaluating problems domains and selecting the Remote Data Mirroring problem. As mentioned above, the authors should describe how the selected problem domain covers at least a representative portion of patterns.
+
+**iv3 Study instruments** :
+
+The authors should provide the scripts used to calculate the inference values or an explanation of the same. Without these scripts, the correlation between the data and the findings is not reproducible.
+
+### Connection to previous paper
+This paper outlines how Bayesian Networks and Dynamic Decision Networks are good implementations of the design of requirement aware systems. The work done in this paper satisfies some of the proposed future work mentioned in Paper 1 by realizing environmental factors that changes and making a decision to maintain a desired level of requirement satisfaction.
