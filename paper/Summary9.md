@@ -36,6 +36,8 @@ The paper describes the procedure and provides results for applying the Dynamic 
 
 **iii3 Informative visualizations**
 
+![Visualization](https://raw.githubusercontent.com/CSC591-MASE-ASA/x9115asa/master/paper/Paper%209.png)
+
 The authors provide useful visualizations of the system in effect and how the decisions made by the DDNs vary over time w.r.t. a system that does not dynamically adapt to changing environmental factors.
 
 **iii4 Future work**
