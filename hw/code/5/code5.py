@@ -6,7 +6,9 @@ from random import random
 
 xlower = [0,0,0,1,0,1,0]
 xup = [0,10,10,5,6,5,10]
-
+# derived from baseline calculations
+EMIN = -369.242811007
+EMAX = 146.103629752
 
 def isok(g,x):
     for i in xrange(1,7):
@@ -30,9 +32,16 @@ def constraints(x):
 def osyczka2(x):
     f1 = 25*(x[1]-2)**2 + (x[2]-2)**2 + (x[3]-1)**2 * (x[4]-4)**2 + (x[5]-1)**2
     f1 = -1 * f1
-    f2 = 0
-    for i in xrange(1,7):
-        f2 += x[i]**2
+
+    f2 = x[1]**2 + x[2]**2 + x[3]**2 + x[4]**2 + x[5]**2 + x[6]**2
+    # print (f1+f2)
+    return normalize(f1 + f2)
+
+def Oenergy(x):
+    f1 = 25*(x[1]-2)**2 + (x[2]-2)**2 + (x[3]-1)**2 * (x[4]-4)**2 + (x[5]-1)**2
+    f1 = -1 * f1
+
+    f2 = x[1]**2 + x[2]**2 + x[3]**2 + x[4]**2 + x[5]**2 + x[6]**2
     return f1 + f2
 
 def randomassign():
@@ -40,40 +49,54 @@ def randomassign():
     while True:
         for i in xrange(1,7):
             x[i] = uniform(xlower[i],xup[i])
-        if constraints(x):
+        if constraints(x) and Oenergy(x) > EMIN and Oenergy(x) < EMAX:
             return x
+
+def normalize(energy):
+
+    enorm = (energy - EMIN)/(EMAX - EMIN)
+    # print EMIN,EMAX,enorm
+    # if enorm > 1: print "ENERGY:" energy
+    return enorm
 
 def change_random_c(x,c):
     x_old = osyczka2(x)
+    x_new = x[:]
     timer = 1000
     no_evals = 0
-    while timer > 0:
-        x[c] = uniform(xlower[c],xup[c])
+    x_new[c] = uniform(xlower[c],xup[c])
+    while timer > 0 and (constraints(x_new) != True):
+        x_new[c] = uniform(xlower[c],xup[c])
         no_evals += 1
-        if constraints(x):
-            break
-        timer-=timer
+        if constraints(x_new):
+            if Oenergy(x_new) > EMIN and Oenergy(x_new) < EMAX :
+                break
+        timer-=1
 
-    x_osyczka2 = osyczka2(x)
-    if x_osyczka2 < x_old:
-        return "?", no_evals, x
-    elif x_osyczka2 > x_old:
-        return "+", no_evals, x
+    if constraints(x_new) and Oenergy(x_new) > EMIN and Oenergy(x_new) < EMAX:
+        x_osyczka2 = osyczka2(x_new)
+        if x_osyczka2 < x_old:
+            return "?", no_evals, x
+        elif x_osyczka2 > x_old:
+            return "+", no_evals, x_new
+        else:
+            return ".", no_evals, x
     else:
         return ".", no_evals, x
 
 
 # Given min to max values for every value, try steps of (max - min)/steps for, say, steps=10
 def change_c_to_maximize(x,c,steps):
-    x_best = x
-    x_curr = x
-    dx = (xup[c] - xlower[c])/float(steps)
+    x_best = x[:]
+    x_curr = x[:]
+    dx = float(xup[c] - xlower[c])/float(steps)
     no_evals = 0
     for i in xrange(0,steps):
         no_evals += 1
         x_curr[c] = xlower[c] + dx*i
-        if constraints(x_curr) and osyczka2(x_curr) > osyczka2(x_best):
-            x_best = x_curr
+        if Oenergy(x_curr) < EMAX and Oenergy(x_curr) > EMIN:
+            if constraints(x_curr) and osyczka2(x_curr) > osyczka2(x_best):
+                x_best = x_curr[:]
 
     # print "RET",x,x_best
     if osyczka2(x) == osyczka2(x_best):
@@ -106,6 +129,7 @@ def max_walk_sat(maxtries,maxchanges,threshold,p,steps):
     evals = 0
     sb = randomassign()
     total_evals = 0
+    cprob = [0,0,0,0,0,0,0]
     print "best solution \t current solution"
     for i in xrange(0,maxtries):
         solution = randomassign()
@@ -117,13 +141,14 @@ def max_walk_sat(maxtries,maxchanges,threshold,p,steps):
                 return solution
 
             c = randint(1,6)
+            cprob[c] += 1
             if p < random():
                 stat, evals, solution = change_random_c(solution,c)
 
             else:
                 stat, evals, solution = change_c_to_maximize(solution,c,steps)
 
-            if osyczka2(solution) > osyczka2(sb):
+            if osyczka2(solution) > osyczka2(sb) :
                 stat = "!"
                 sb = solution[:]
             out = out + stat
@@ -134,11 +159,12 @@ def max_walk_sat(maxtries,maxchanges,threshold,p,steps):
     print "Parameters used maxtries={0}\t maxchanges={1}\t p={2}\t threshold={3}\t steps={4}".format(maxtries,maxchanges,p,threshold,steps)
     print "Total evaluations: {0}".format(total_evals)
     print "Final solution: {0} \nFinal energy : {1}".format(sb[1:],osyczka2(sb))
+    print "cprob: {0}".format(cprob)
 
 maxtries=500
-maxchanges=50
+maxchanges=100
 p=0.5
-threshold=1000000
+threshold= 1
 steps=10
 
 max_walk_sat(maxtries,maxchanges,threshold,p,steps)
