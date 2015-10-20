@@ -36,7 +36,7 @@ The paper describes the procedure and provides results for applying the Dynamic 
 
 **iii3 Informative visualizations**
 
-The authors provide useful visualizations of the system in effect and how the decisions made by the DDNs vary over time w.r.t. a system hat does not dynamically adapt to changing environmental factors.
+The authors provide useful visualizations of the system in effect and how the decisions made by the DDNs vary over time w.r.t. a system that does not dynamically adapt to changing environmental factors.
 
 **iii4 Future work**
 
