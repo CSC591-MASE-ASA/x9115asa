@@ -4,8 +4,8 @@ The total runs to obtain the baseline = 200000
 
 ```
 Anishas-MacBook-Pro:5 anisha$ python basecalc.py
-MAX = 145.762528642
-MIN=-353.289040346
+MAX = 146.103629752
+MIN= -369.242811007
 ```
 
 MaxWalkSat results:
