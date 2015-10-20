@@ -4,7 +4,7 @@ import random, math
 class schaffer:
     min = 10.01**5
     max = -min
-    lower, upper = -10**4, 10**4
+    lower, upper = -10**3, 10**3
     minx, maxx = lower, upper
     def normalize(self, value):
         #print self.min, self.max
@@ -23,7 +23,7 @@ class schaffer:
         return random.randrange(self.lower, self.upper)
     
     def schaffer_minmax(self):
-        for i in range(10000):
+        for i in range(100000):
             x =  random.randrange(self.lower, self.upper)
             f1, f2 = self.gen_f1f2(x)
             sum = f1+f2
@@ -37,7 +37,7 @@ class schaffer:
         print 
         s = sb = random.randrange(self.lower, self.upper)
         e = eb = self.energy(s)
-        emax = -2
+        emax = -0.0000001
         print 's0 = ', s
         print 'e0 = ', e
         def P(old, new, t):
@@ -50,13 +50,14 @@ class schaffer:
                 print '\n',
                 op = "%04d"%k+",%.2f"%en+", "
                 print op,
+            k+=1
             if en < eb:
                 sb, eb = sn, en
                 print '!',
             if en < e:
                 s, e = sn, en
                 print '+',
-            elif P(e, en, (1-k/kmax)) > random.random():
+            elif P(e, en, k/kmax) < random.random():
                 s, e = sn, en
                 print '?',
             print '.',

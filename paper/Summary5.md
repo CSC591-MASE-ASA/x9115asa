@@ -13,7 +13,6 @@ N. Bencomo et al., “Genie: Supporting the Model-Driven Development of Reflecti
 * iii1- **Informative visualizations** - The below figure demonstrates the 3 levels of abstraction in the approach used by Genie. The lowest level is composed of source code files and data files. On level two includes the different models associated with components. Level three has state diagrams and flow diagrams that result in system reconfigurations.
 ![Alt text](https://raw.githubusercontent.com/CSC591-MASE-ASA/x9115asa/master/resources/read3_img1.PNG)
 
-
 * iii2 - **Commentary** - 
 The authors mention the two methods used to test the genie tool: The first one being a sensor network used to predict flooding of a river valley in North-West England. This case study is in the context of mobile computing environment applications which need to dynamically discover services in highly heterogeneous environments.
 
@@ -21,8 +20,6 @@ The authors mention the two methods used to test the genie tool: The first one b
 1. G. Coulson, G. Blair, P. Grace, A. Joolia, K. Lee, J. Ueyama, and T. Sivaharan. A generic component model for building systems software. ACM Transactions on Computer Systems, February, 2008.
 2. P. Grace, G. Coulson, G. Blair, and B. Porter. Deep middleware for the divergent grid. In IFIP/ACM/USENIX Middleware, France, 2005.
 3. D. Hughes, P. Greenwood, G. Coulson, G. Blair, F. Pappenberger, P. Smith, and K. Beven. Gridstix:Supporting flood prediction using embedded hardware, and next generation grid middleware. In 4th International Workshop on Mobile Distributed Computing (MDC’06), Niagara Falls, USA, 2006.
-
-
 
 * iii4 - **Future Work** - 
 The authors of the paper wish to make the genie tool reconfigurable at runtime. The authors also wish to enhance Genie with validation capabilities so it can return a list of conflicts that need to be resolved.
@@ -34,3 +31,6 @@ The authors of the paper wish to make the genie tool reconfigurable at runtime. 
 2. iv2 - The authors mention requirement models in i* but the term has not been defined making it difficult to gain context. 
 
 3. iv3 - It would be great if the authors could provide downloadable content similar to gridkit.
+
+#### Relation to Paper One
+The requirement aware system mentioned in Paper 1 was applied to the flood detection system GridStix introduced in this paper. Although GridStix was decomissioned a simulated environment was created to perform the study. The application to GridStix showed that REAssuRE can reason about how design-time assumptions affect goal realization strategies of runtime goal based models, as evidence for or against design-time assumptions is gathered by claim monitoring.

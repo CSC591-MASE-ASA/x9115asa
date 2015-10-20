@@ -1,4 +1,4 @@
-| Fileds   |      Values     
+| Fields   |      Values     
 |----------|:-------------:|
 | Suggested name of dataset |  Goal Model for socio-technical system |
 | Suggested category |    Requirements monitoring   |
