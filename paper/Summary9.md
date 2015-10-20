@@ -48,7 +48,7 @@ The authors want to investigate how the DDN system can be applied to quanititati
 
 Since the paper attempts to address a new approach to define Dynamic Decision Network, the authors should investigate and present various ways in which the methodology can be effectively used and possibly abused.
 
-**iv2 Sampling Procedures ** :
+**iv2 Sampling Procedures** :
 
 The authors should outline how they went about evaluating problems domains and selecting the Remote Data Mirroring problem. As mentioned above, the authors should describe how the selected problem domain covers at least a representative portion of patterns.
 
