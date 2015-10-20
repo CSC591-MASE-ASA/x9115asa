@@ -6,15 +6,15 @@ Bencomo, Nelly, Amel Belaggoun, and Valerie Issarny. "Dynamic decision networks 
 
 Dynamic Decision networks (DNs) extend Bayesian networks to provide a mechanism for making rational decisions by combining probability and utility theory over changes in variables over time.
 
-**ii2 Bayesian network **
+**ii2 Bayesian network**
 
 Bayesian network is a probabilistic model that represents a set of random variables or chance nodes and their conditional dependencies.
 
-**ii3 Decision Node **
+**ii3 Decision Node**
 
 A decision node D<sub>t</sub> represents the decision taken when specifying the topology to be used in time slice t.
 
-**ii4 Evidence Node **
+**ii4 Evidence Node**
 
 The evidence node E<sub>t</sub> represents the information observed by monitorables.
 
@@ -48,7 +48,7 @@ The authors want to investigate how the DDN system can be applied to quanititati
 
 Since the paper attempts to address a new approach to define Dynamic Decision Network, the authors should investigate and present various ways in which the methodology can be effectively used and possibly abused.
 
-**iv2 Sampling Procedures ** :
+**iv2 Sampling Procedures** :
 
 The authors should outline how they went about evaluating problems domains and selecting the Remote Data Mirroring problem. As mentioned above, the authors should describe how the selected problem domain covers at least a representative portion of patterns.
 
