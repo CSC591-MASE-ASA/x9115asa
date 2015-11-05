@@ -1,14 +1,17 @@
 import dtlz
-fitness_family = None
+import random
+
+num_objs = 2
+num_decs = 10
 
 class candidate:
     fitness = 0
     decs = []
     def __init__(self, decs):
         self.decs = decs
-        calc_fitness()
 
-    def calc_fitness():
+    def calc_fitness(self):
+        self.fitness += 1
         return
 
 class population:
@@ -21,7 +24,16 @@ class population:
         self.fitness_family = fitness_family
 
     def randomize(self):
-        return
+        for i in range(self.num_candidates):
+            can = candidate([])
+            for j in range(num_decs):
+                if random.random() > 0.5:
+                    can.decs.append(1)
+                else:
+                    can.decs.append(0)
+            can.calc_fitness()
+            self.candidates.append(can)
+        print self.candidates
 
     def crossover(self, candidate1, candidate2):
         return
@@ -41,7 +53,9 @@ class GA:
         self.fitness_family = fitness_family
         return
 
-    def randomize():
+    def randomize(self):
+        gen1 = population(self.num_candidates, self.fitness_family)
+        gen1.randomize()
         return
 
     def next():
@@ -50,4 +64,5 @@ class GA:
     def statistics():
         return
 
-ga = GA(dtlz.dtlz1)
+ga = GA(20, dtlz.dtlz1)
+ga.randomize()
