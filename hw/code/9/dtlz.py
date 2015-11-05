@@ -82,3 +82,27 @@ def dtlz5(x, num_objs, num_decs):
     f[num_objs-1] = (1 + g)*math.sin(theta[0]*math.pi/2)
 
     return f
+
+def dtlz7(x, num_objs, num_decs):
+    f = [None]*num_objs
+
+    def gx():
+        y = 0.0
+        for i in range(0, num_decs):
+            y += x[i]
+        return (9*y/num_decs)
+
+    def hx(f, g):
+        y = 0.0
+        for i in range(0, num_objs-1):
+            y += (f[i] / (1 + g)) * (1 + math.sin(3*math.pi*f[i]))
+        return num_objs - y
+
+    g = 1 + gx()
+
+    for i in range(0, num_objs-1):
+        f[i]=x[i]
+
+    f[num_objs-1] = (1+g)*hx(f, g)
+
+    return f
