@@ -1,4 +1,5 @@
-fitness_family = "Something"
+import dtlz
+fitness_family = None
 
 class candidate:
     fitness = 0
@@ -12,10 +13,15 @@ class candidate:
 
 class population:
     candidates = []
-    fitness_family = "Something"
+    num_candidates = 10;
+    fitness_family = None
 
-    def __init__(self, fitness_family):
+    def __init__(self, num_candidates = 10, fitness_family = dtlz.dtlz1):
+        self.num_candidates = num_candidates
         self.fitness_family = fitness_family
+
+    def randomize(self):
+        return
 
     def crossover(self, candidate1, candidate2):
         return
@@ -26,12 +32,22 @@ class population:
 
 class GA:
     generations = []
+    fitness_family = None
+    num_candidates = 10
+    current_generation = 0
 
-    def __init__(self, fitness_family):
+    def __init__(self, num_candidates = 10, fitness_family = dtlz.dtlz1):
+        self.num_candidates = num_candidates
+        self.fitness_family = fitness_family
         return
 
-    def GA(self, dtlz_id, num_opts, num_decs):
+    def randomize():
         return
 
-ga = GA("")
-ga.GA(1, 2, 20)
+    def next():
+        return
+
+    def statistics():
+        return
+
+ga = GA(dtlz.dtlz1)
