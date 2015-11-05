@@ -10,8 +10,9 @@ class candidate:
     def __init__(self, decs):
         self.decs = decs
 
-    def calc_fitness(self):
-        self.fitness += 1
+    def calc_fitness(self, fitness_family):
+        f = fitness_family(self.decs, num_objs, len(self.decs))
+        self.fitness = sum(f)
         return
 
 class population:
@@ -31,9 +32,8 @@ class population:
                     can.decs.append(1)
                 else:
                     can.decs.append(0)
-            can.calc_fitness()
+            can.calc_fitness(self.fitness_family)
             self.candidates.append(can)
-        print self.candidates
 
     def crossover(self, candidate1, candidate2):
         return
