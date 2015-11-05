@@ -5,19 +5,19 @@ def dtlz1(x, num_objs, num_decs):
 
     def gx():
         g = 0.0
-        for i in range(0, num_decs-1):
+        for i in range(0, num_decs):
             g += math.pow(x[i] - 0.5, 2) - math.cos(20* math.pi * (x[i] - 0.5))
         g = 100 * (g + num_decs)
         return g
 
     g = gx()
     f[0] = 0.5 * (1 + g)
-    for i in range(0, num_objs-2):
+    for i in range(0, num_objs-1):
         f[0] *= x[i]
 
     for i in range(1, num_objs-1):
         f[i] = 0.5 * (1 + g)
-        for j in range(0, num_objs-1-(i+1)):
+        for j in range(0, num_objs-(i+1)):
             f[i] *= x[j]
         f[i] *= 1 - x[num_objs - (i + 1)]
 
@@ -30,19 +30,19 @@ def dtlz3(x, num_objs, num_decs):
 
     def gx():
         g = 0.0
-        for i in range(0, num_decs-1):
+        for i in range(0, num_decs):
             g += math.pow(x[i] - 0.5, 2) - math.cos(20* math.pi * (x[i] - 0.5))
         g = 100 * (g + num_decs)
         return g
 
     g = gx()
     f[0] = 1 + g
-    for i in range(0, num_objs-2):
+    for i in range(0, num_objs-1):
         f[0] *= math.cos(x[i]*math.pi/2)
 
-    for i in range(1, num_objs - 1):
+    for i in range(1, num_objs-1):
         f[i] = 1 + g
-        for j in range(0, num_objs - i):
+        for j in range(0, num_objs - (i+1)):
             f[i] *= math.cos(x[j]*math.pi/2)
         f[i] *= math.sin(x[num_objs - (i+1)] * math.pi/2)
 
@@ -56,7 +56,7 @@ def dtlz5(x, num_objs, num_decs):
 
     def gx():
         y = 0.0
-        for i in range(0, num_decs-1):
+        for i in range(0, num_decs):
             y += math.pow(x[i]-0.5, 2)
 
         return y
@@ -66,16 +66,16 @@ def dtlz5(x, num_objs, num_decs):
     theta[0] = x[0]
     t = 1/(2*(1+g))
 
-    for i in range(1, num_objs-1):
+    for i in range(1, num_objs):
         theta[i] = t + ((g*x[i])/(1+g))
 
     f[0] = 1 + g
-    for i in range(0, num_objs-2):
+    for i in range(0, num_objs-1):
         f[0] *= math.cos(theta[i] * math.pi/2)
 
-    for i in range(1, num_objs-2):
+    for i in range(1, num_objs-1):
         f[i] = 1 + g
-        for j in range(0, num_objs - i):
+        for j in range(0, num_objs - (i+1)):
             f[i] *= math.cos(theta[j] * math.pi/2)
         f[i] *= math.sin(theta[num_objs-(i+1)]*math.pi/2)
 
