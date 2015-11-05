@@ -42,10 +42,43 @@ def dtlz3(x, num_objs, num_decs):
 
     for i in range(1, num_objs - 1):
         f[i] = 1 + g
-        for j in range(0, num_objs - (i+1)):
+        for j in range(0, num_objs - i):
             f[i] *= math.cos(x[j]*math.pi/2)
         f[i] *= math.sin(x[num_objs - (i+1)] * math.pi/2)
 
     f[num_objs-1] = (1 + g) * math.sin(x[0] * math.pi/2)
+
+    return f
+
+def dtlz5(x, num_objs, num_decs):
+    theta = [None]*num_objs
+    f = [None]*num_objs
+
+    def gx():
+        y = 0.0
+        for i in range(0, num_decs-1):
+            y += math.pow(x[i]-0.5, 2)
+
+        return y
+
+    g = gx()
+    t = 0.0
+    theta[0] = x[0]
+    t = 1/(2*(1+g))
+
+    for i in range(1, num_objs-1):
+        theta[i] = t + ((g*x[i])/(1+g))
+
+    f[0] = 1 + g
+    for i in range(0, num_objs-2):
+        f[0] *= math.cos(theta[i] * math.pi/2)
+
+    for i in range(1, num_objs-2):
+        f[i] = 1 + g
+        for j in range(0, num_objs - i):
+            f[i] *= math.cos(theta[j] * math.pi/2)
+        f[i] *= math.sin(theta[num_objs-(i+1)]*math.pi/2)
+
+    f[num_objs-1] = (1 + g)*math.sin(theta[0]*math.pi/2)
 
     return f
