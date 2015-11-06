@@ -3,9 +3,9 @@ from optimizers import *
 
 
 def main():
-    for model in [Schaffer, Osyczka2, Kursawe]:
-        for optimizer in [sa, mws]:
-            optimizer(model())
+    for model in [Schaffer, Kursawe, Osyczka2]:
+        for optimizer in [sa]:
+            print optimizer(model())
             # TODO: write code...
 
 if __name__ == "__main__":
