@@ -1,8 +1,7 @@
-About:
-```
+### About:
 The program finds a solution that maximizes Schaffer, Osyczka2 & Kursawe models using Simulated Annealing and minimizes them using Max Walk Sat algorithms.
 
-Output:
+### Output:
 ```
 Model: Schaffer Model
 Optimizer: Simulated Annealing
@@ -12,6 +11,8 @@ s0 = [-3587]
 Final Solution: 
 eb = 1.21E-06
 sb = [12]
+```
+
 ```
 Model: Schaffer Model
 Optimizer: Max Walk Sat
@@ -28,6 +29,7 @@ Final Solution:
 sb: ['-9999.00'] 
 eb : 0.9998
 ```
+```
 Model: Kursawe Model
 Optimizer: Simulated Annealing
 e0 = 6.74E-01
@@ -36,6 +38,7 @@ s0 = [-5, 4, 1]
 Final Solution: 
 eb = 0.00E+00
 sb = [-1, -1, -1]
+```
 ```
 Model: Kursawe Model
 Optimizer: Max Walk Sat
@@ -52,6 +55,8 @@ Final Solution:
 sb: ['-5.00', '-5.00', '-5.00'] 
 eb : 1.0000
 ```
+
+```
 Model: Osyczka2 Model
 Optimizer: Simulated Annealing
 e0 = 8.03E-01
@@ -60,6 +65,8 @@ s0 = [2, 3, 2, 0, 2, 6]
 Final Solution: 
 eb = 5.48E-02
 sb = [5, 1, 4, 0, 1, 5]
+```
+
 ```
 Model: Osyczka2 Model
 Optimizer: Max Walk Sat
@@ -81,7 +88,7 @@ eb : 0.9996
 Detailed Output can be found in output.txt
 
 
-Notations:
+### Notations:
 
 "!" = new best solution found
 
