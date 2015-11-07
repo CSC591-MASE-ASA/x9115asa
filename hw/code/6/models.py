@@ -1,15 +1,17 @@
 from __future__ import division
-import math, random
+import math, random,abc
 
 class Model:
     def __init__(self):
         self.no_of_decisions=1
         self.no_of_objecives=2
-        self.max_energy = -10**5
-        self.min_energy = 10**5
-        self.baseline_runs=1000000
+        self.max_energy = -10**4
+        self.min_energy = 10**4
+        self.baseline_runs=100000
         self.upper_bounds=[]
         self.lower_bounds=[]
+        self.name = 'Generic name'
+        
         
     def get_decision(self):
         while True:
@@ -24,16 +26,17 @@ class Model:
         return True
     def energy(self, decs):
         sum=0
-        for val in decs:
+        for val in self.get_objectives(decs):
             sum+=val
-        return self.normalize(sum)
+        return sum
+    @abc.abstractmethod
     def get_objectives(self, decs=[0]):
-        return (decs[0]**2, (decs[0]-2)**2)
+        return None
     def baseline(self):
         for i in xrange(self.baseline_runs):
             x=self.get_decision()
             f1, f2 = self.get_objectives(x)
-            sum = f1+f1
+            sum = f1+f2
             if sum > self.max_energy:
                 self.max_energy=sum
             if sum < self.min_energy:
@@ -42,10 +45,12 @@ class Model:
 class Schaffer(Model): 
     def __init__(self):
         Model.__init__(self)
-        self.upper_bounds=[10**5]
-        self.lower_bounds=[-10**5]
+        self.upper_bounds=[10000]
+        self.lower_bounds=[-10000]
+        self.name = 'Schaffer Model'
         
-            
+    def get_objectives(self, decs=[0]):
+        return decs[0]**2, (decs[0]-2)**2     
 
 class Osyczka2(Model): 
     def __init__(self):
@@ -53,6 +58,7 @@ class Osyczka2(Model):
         self.no_of_decisions = 6
         self.upper_bounds = [10, 10, 5, 6, 5, 10]
         self.lower_bounds = [0, 0, 1, 0, 1 , 0]
+        self.name = 'Osyczka2 Model'
     def eval(self, decs):
         if (decs[0] + decs[1] - 2) <0:
             return False
@@ -69,7 +75,7 @@ class Osyczka2(Model):
         return True
     def get_objectives(self, decs=[0,0,0,0,0,0]):
         f1, f2 = 0,0
-        f1 = -25*((decs[0]-2)**2) + (decs[1]-2)**2 + ((decs[2]-1)**2)*((decs[3]-4)**2) + (decs[4] - 1)**2
+        f1 = -(25*((decs[0]-2)**2) + (decs[1]-2)**2 + ((decs[2]-1)**2)*((decs[3]-4)**2) + (decs[4] - 1)**2)
         for x in decs:
             f2+=x**2
         return f1, f2
@@ -80,6 +86,7 @@ class Kursawe(Model):
         self.no_of_decisions=3
         self.upper_bounds = [5,5,5]
         self.lower_bounds = [-5,-5,-5]
+        self.name = 'Kursawe Model'
     def get_objectives(self, decs):
         f1, f2 =0,0
         a, b = 0.8, 1
