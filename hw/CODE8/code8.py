@@ -107,13 +107,20 @@ def type3():
     mw_threshold = 2
     mw_steps = 10
     era_collection = []
+    de_cr = 0.4
+    de_f  = 0.5
+    de_npExpand = 10
+    kmax=1000
 
     for i in xrange(0,20):
         seed = randomassign()
         mw_sol, mw_era = max_walk_sat(eras,mw_maxtries,mw_maxchanges,mw_threshold,mw_p,mw_steps,era_length,seed)
         era_collection.append(["MaxWalkSat"+str(i+1)] + mw_era)
-        sa_sol, sa_era = simmulated_annealing(1000,era_length,seed)
+        sa_sol, sa_era = simmulated_annealing(era_length,seed)
         era_collection.append(["SA"+str(i+1)] + sa_era)
+        de_sol, de_era = differential_evolution(era_length, seed, de_cr, de_f, kmax)
+        era_collection.append(["DE"+str(i+1)] + de_era)
+
 
     rdivDemo(era_collection)
 
@@ -128,13 +135,11 @@ def max_walk_sat(eras,maxtries,maxchanges,threshold,p,steps,era_length,seed):
     sb = randomassign()
     total_evals = 0
     cprob = [0,0,0,0,0,0,0]
-    # print "best solution \t current solution"
     this_era = []
     prev_era = []
 
     def change_random_c(x,c):
         x_new = x[:]
-        # x_new[c] = uniform(xlower[c],xup[c])
         x_new[c] = random()
         res = type1(x,x_new)
 
@@ -147,16 +152,13 @@ def max_walk_sat(eras,maxtries,maxchanges,threshold,p,steps,era_length,seed):
             if type1(x_curr,x_best) == x_curr:
                 x_best = x_curr[:]
 
-        # print "RET",x,x_best
         return type1(x,x_best)
-    # while eras > 1:
 
     for i in xrange(0,maxtries):
         if i == 0:
             solution = seed
         else:
             solution = randomassign()
-        # out = ""
 
         for j in xrange(0,maxchanges):
             stat = ""
@@ -174,7 +176,6 @@ def max_walk_sat(eras,maxtries,maxchanges,threshold,p,steps,era_length,seed):
             if type1(solution,sb) == solution:
                 sb = solution[:]
 
-        # print str(dtlz7(sb))+"\t" +str(dtlz7(solution)) + "\t\t"+out
         if i % era_length != 0:
             this_era.append(solution)
         else:
@@ -189,7 +190,7 @@ def max_walk_sat(eras,maxtries,maxchanges,threshold,p,steps,era_length,seed):
 
 
 def simmulated_annealing(kmax=1000,era_length,seed):
-    # print
+
     def P(old, new, t):
         val = (old-new)/t
         return math.exp(val)
@@ -205,12 +206,10 @@ def simmulated_annealing(kmax=1000,era_length,seed):
     s = sb = seed
     e = eb = dtlz7(s)
     emax = -1
-    # print 's0 = ', s
-    # print 'e0 = ', e
     eras = 5
     this_era = []
     prev_era = []
-    # while k < kmax and e > emax and eras > 0:
+
     while True:
         sn = neighbor(s)
         en = dtlz7(sn)
@@ -239,5 +238,65 @@ def simmulated_annealing(kmax=1000,era_length,seed):
 
     return sb, prev_era
 
-def differential_evolution():
-    return
+def differential_evolution(era_length, seed, cr, f, k_max):
+    np = era_length
+    eras = 5
+    k = 0
+    def xPlusFyz(x,y,z):
+        def smear((x1, y1, z1)):
+            x1 = x1 if cr <= r() else x1 + f*(y1-z1)
+            return x1
+        for i in len(x):
+            sn[i] = [smear(these) for these in zip(x,y,z)]
+        return sn
+
+    def create_frontier(seed):
+        frontier = []
+        frontier.append(seed)
+        for i in xrange(1, np):
+            frontier.append(randomassign)
+        return frontier
+
+    def generate_items(lst, avoid=None):
+        def unique_item():
+            x = avoid
+            while id(x) in seen:
+              x = lst[  int(random.uniform(0,len(lst))) ]
+            seen.append( id(x) )
+            return x
+
+        assert len(lst) > 4
+        avoid = avoid or lst[0]
+        seen  = [ id(avoid) ]
+        return unique_item(), unique_item(), unique_item()
+
+    def era_energy(final_frontier):
+        res = []
+        for i in xrange(0,len(final_frontier)):
+            res.append(dtlz7(final_frontier[i]))
+        return res
+
+    frontier = create_frontier(seed)
+    s = sb = seed
+    e = eb = dtlz7(seed)
+
+    prev_era = []
+    this_era = []
+    while True:
+        for i,candidate in enumerate(frontier):
+            x, y, z = generate_items(frontier)
+            sn = xPlusFyz(x,y,z)
+            en = dtlz7(sn)
+            if type1(en,eb) == en:
+                sb, eb = sn, en
+            if type1(en, e) == en:
+                frontier[n] = sn
+            k = k + 1
+        this_era = era_energy(frontier)
+        eras = type2(prev_era,this_era)
+        prev_era = this_era[:]
+        this_era = []
+        if k > k_max or eras < 1:
+            break
+
+    return sb, prev_era
