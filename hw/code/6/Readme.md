@@ -85,7 +85,7 @@ sb: ['2.00', '4.00', '3.40', '3.60', '4.60', '9.00']
 eb : 0.9996
 ```
 
-Detailed Output can be found in output.txt
+Detailed Output can be found in [output.txt](https://raw.githubusercontent.com/CSC591-MASE-ASA/x9115asa/master/hw/code/6/output.txt)
 
 
 ### Notations:
