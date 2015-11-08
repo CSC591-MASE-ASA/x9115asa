@@ -21,6 +21,7 @@ class candidate:
 class population:
     num_candidates = 10;
     fitness_family = None
+    prob_mut = 0.05
 
     def __init__(self, num_candidates = 10, fitness_family = dtlz.dtlz1):
         self.candidates = []
@@ -57,7 +58,10 @@ class population:
     def select(self):
         return self.candidates[random.randrange(0, self.num_candidates)]
 
-    def mutate(self, candidate, probability):
+    def mutate(self, candidate):
+        for i in range(0, num_decs):
+            if random.random() < self.prob_mut:
+                candidate.decs[i] = candidate.decs[i] ^ 1
         return
 
     def __repr__(self):
@@ -87,6 +91,8 @@ class GA:
             can1 = curr_pop.select()
             can2 = curr_pop.select()
             [crs1, crs2] = curr_pop.crossover(can1, can2)
+            curr_pop.mutate(crs1)
+            curr_pop.mutate(crs2)
             next_pop.candidates.append(crs1)
             next_pop.candidates.append(crs2)
         self.generations.append(next_pop);
