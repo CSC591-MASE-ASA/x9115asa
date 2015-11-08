@@ -1,5 +1,6 @@
 import dtlz
 import random
+import math
 
 num_objs = 2
 num_decs = 10
@@ -39,10 +40,23 @@ class population:
             self.candidates.append(can)
 
     def crossover(self, candidate1, candidate2):
-        return
+        crossover_point = random.randrange(0, num_decs)
+        decs1 = []
+        decs2 = []
+        for i in range(0, crossover_point):
+            decs1.append(candidate1.decs[i])
+            decs2.append(candidate2.decs[i])
+        for i in range(crossover_point, num_decs):
+            decs1.append(candidate2.decs[i])
+            decs2.append(candidate1.decs[i])
+        can1 = candidate(decs1)
+        can1.calc_fitness(self.fitness_family)
+        can2 = candidate(decs2)
+        can2.calc_fitness(self.fitness_family)
+        return [can1, can2]
 
     def select(self):
-        return self.candidates[math.floor(random.random()*self.num_candidates)]
+        return self.candidates[random.randrange(0, self.num_candidates)]
 
     def mutate(self, candidate, probability):
         return
@@ -69,7 +83,13 @@ class GA:
 
     def next(self):
         curr_pop = self.generations[self.current_generation];
-        #for i in range(0, self.num_candidates):
+        next_pop = population(self.num_candidates, self.fitness_family)
+        for i in range(0, self.num_candidates, 2):
+            can1 = curr_pop.select()
+            can2 = curr_pop.select()
+            [crs1, crs2] = curr_pop.crossover(can1, can2)
+            next_pop.candidates.append(crs1)
+            next_pop.candidates.append(crs2)
         return
 
     def statistics():
@@ -78,3 +98,4 @@ class GA:
 ga = GA(10, dtlz.dtlz1)
 ga.randomize()
 print ga.generations[0]
+ga.next()
