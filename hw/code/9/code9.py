@@ -11,9 +11,12 @@ class candidate:
         self.decs = decs
 
     def calc_fitness(self, fitness_family):
-        f = fitness_family(self.decs, num_objs, len(self.decs))
-        self.fitness = sum(f)
+        self.fitness = fitness_family(self.decs, num_objs, len(self.decs))
         return
+
+    def __repr__(self):
+        return "".join([str(x) for x in self.decs])
+
 
 class population:
     candidates = []
@@ -28,7 +31,7 @@ class population:
         for i in range(self.num_candidates):
             can = candidate([])
             for j in range(num_decs):
-                if random.random() > 0.5:
+                if random.random() >= 0.5:
                     can.decs.append(1)
                 else:
                     can.decs.append(0)
@@ -37,10 +40,15 @@ class population:
 
     def crossover(self, candidate1, candidate2):
         return
+
     def select(self):
-        return
+        return self.candidates[math.floor(random.random()*self.num_candidates)]
+
     def mutate(self, candidate, probability):
         return
+
+    def __repr__(self):
+        return ",".join([can.__repr__() for can in self.candidates])
 
 class GA:
     generations = []
@@ -56,13 +64,17 @@ class GA:
     def randomize(self):
         gen1 = population(self.num_candidates, self.fitness_family)
         gen1.randomize()
+        self.generations.append(gen1)
         return
 
-    def next():
+    def next(self):
+        curr_pop = self.generations[self.current_generation];
+        #for i in range(0, self.num_candidates):
         return
 
     def statistics():
         return
 
-ga = GA(20, dtlz.dtlz1)
+ga = GA(10, dtlz.dtlz1)
 ga.randomize()
+print ga.generations[0]
