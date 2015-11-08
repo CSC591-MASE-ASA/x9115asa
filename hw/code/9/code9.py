@@ -6,10 +6,9 @@ num_objs = 2
 num_decs = 10
 
 class candidate:
-    fitness = 0
-    decs = []
     def __init__(self, decs):
         self.decs = decs
+        self.fitness = None
 
     def calc_fitness(self, fitness_family):
         self.fitness = fitness_family(self.decs, num_objs, len(self.decs))
@@ -20,11 +19,11 @@ class candidate:
 
 
 class population:
-    candidates = []
     num_candidates = 10;
     fitness_family = None
 
     def __init__(self, num_candidates = 10, fitness_family = dtlz.dtlz1):
+        self.candidates = []
         self.num_candidates = num_candidates
         self.fitness_family = fitness_family
 
@@ -90,6 +89,8 @@ class GA:
             [crs1, crs2] = curr_pop.crossover(can1, can2)
             next_pop.candidates.append(crs1)
             next_pop.candidates.append(crs2)
+        self.generations.append(next_pop);
+        self.current_generation += 1
         return
 
     def statistics():
@@ -97,5 +98,4 @@ class GA:
 
 ga = GA(10, dtlz.dtlz1)
 ga.randomize()
-print ga.generations[0]
 ga.next()
