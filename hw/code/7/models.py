@@ -97,8 +97,8 @@ class Golinski(Model):
     def __init__(self):
         Model.__init__(self)
         self.no_of_decisions=7
-        self.lower_bounds = [2.6, 0.7, 17.0, 7.3,7.3,2.9,5.0]
-        self.upper_bounds = [3.6,0.8,28.0, 8.3,8.3,3.9,5.5]
+        self.lower_bounds = [3.5, 0.7, 17.0, 7.3,7.3,2.9,5.0]
+        self.upper_bounds = [3.6,0.72,28.0, 8.3,8.3,3.9,5.5]
         self.name = 'Golinski Model'
     def get_decision(self):
         while True:
@@ -112,14 +112,14 @@ class Golinski(Model):
         constraints.append(decs[4]**3/(decs[1]*decs[2]*decs[6]**4)-1/1.93)
         constraints.append(decs[1]*decs[2] - 40)
         constraints.append(decs[0]/decs[1]-12)
-        constraints.append(5-decs[0]/decs[1])
+        constraints.append(5-(decs[0]/decs[1]))
         constraints.append(1.9 - decs[3] + 1.5*decs[5])
         constraints.append(1.9 - decs[4] + 1.1*decs[6])
         constraints.append((((745*decs[3]/(decs[1]*decs[2]))**2+1.69*10**7)**0.5)/(0.1*decs[5]**3)-1300)
-        constraints.append((((745*decs[3]/(decs[1]*decs[2]))**2)+1.575*10**8)/(0.1*decs[6]**3)-1100)
-        
-        for constraint in constraints:
-            if constraint > 0:
+        constraints.append((((745*decs[4]/(decs[1]*decs[2]))**2)+1.575*10**8)**.5/(0.1*decs[6]**3)-1100)
+        #print constraints[9]
+        for i in xrange(len(constraints)):
+            if constraints[i] > 0:
                 return False
         return True
     def get_objectives(self, decs=[0,0,0,0,0,0,0]):
