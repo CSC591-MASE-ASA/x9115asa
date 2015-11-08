@@ -60,18 +60,16 @@ class Osyczka2(Model):
         self.lower_bounds = [0, 0, 1, 0, 1 , 0]
         self.name = 'Osyczka2 Model'
     def eval(self, decs):
-        if (decs[0] + decs[1] - 2) <0:
-            return False
-        if (6 - decs[0] - decs[1]) < 0:
-            return False
-        if (2 - decs[1] + decs[0]) < 0:
-            return False
-        if (2 - decs[0] + 3*decs[1]) < 0:
-            return False
-        if (4 - (decs[2]-3)**2 - decs[3]) < 0:
-            return False
-        if ((decs[4]-3)**2 + decs[5] - 4)<0:
-            return False
+        constraints=[]
+        constraints.append((decs[0] + decs[1] - 2))
+        constraints.append((6 - decs[0] - decs[1]))
+        constraints.append((2 - decs[1] + decs[0]))
+        constraints.append((2 - decs[0] + 3*decs[1]))
+        constraints.append((4 - (decs[2]-3)**2 - decs[3]))
+        constraints.append(((decs[4]-3)**2 + decs[5] - 4))
+        for constraint in constraints:
+            if constraint < 0:
+                return False
         return True
     def get_objectives(self, decs=[0,0,0,0,0,0]):
         f1, f2 = 0,0
