@@ -99,9 +99,24 @@ class GA:
         self.current_generation += 1
         return
 
-    def statistics():
+    def statistics(self):
+        curr_pop = self.generations[self.current_generation];
+        best_fitness = sum(curr_pop.candidates[0].fitness)
+        worst_fitness = sum(curr_pop.candidates[0].fitness)
+        sum_fitness = 0
+        for i in range(0, self.num_candidates):
+            if(sum(curr_pop.candidates[i].fitness) < best_fitness):
+                best_fitness = sum(curr_pop.candidates[i].fitness)
+            if(sum(curr_pop.candidates[i].fitness) > worst_fitness):
+                worst_fitness = sum(curr_pop.candidates[i].fitness)
+            sum_fitness += sum(curr_pop.candidates[i].fitness)
+        print [sum(can.fitness) for can in curr_pop.candidates]
+        print "Best fitness: " + str(best_fitness)
+        print "Worst fitness: " + str(worst_fitness)
+        print "Avg fitness: " + str(sum_fitness / self.num_candidates)
         return
 
 ga = GA(10, dtlz.dtlz1)
 ga.randomize()
+ga.statistics()
 ga.next()
