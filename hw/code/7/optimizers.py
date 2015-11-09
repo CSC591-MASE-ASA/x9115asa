@@ -72,9 +72,9 @@ class mws(Optimizer):
         x_new = x[:]
         timer = 1000
         no_evals = 0
-        x_new[c] = random.randrange(self.model.lower_bounds[c],self.model.upper_bounds[c])
+        x_new[c] = random.uniform(self.model.lower_bounds[c],self.model.upper_bounds[c])
         while timer > 0 and (self.model.eval(x_new) != True):
-            x_new[c] = random.randrange(self.model.lower_bounds[c],self.model.upper_bounds[c])
+            x_new[c] = random.uniform(self.model.lower_bounds[c],self.model.upper_bounds[c])
             no_evals += 1
             if self.model.eval(x_new):
                 if self.model.energy(x_new) > self.model.min_energy and self.model.energy(x_new) <self.model.max_energy :
@@ -123,7 +123,7 @@ class mws(Optimizer):
         self.print_buffer.append('s0 = {0}'.format(sb))
         self.print_buffer.append('')
         total_evals = 0
-        cprob = [0,0,0,0,0,0]
+        cprob = [0,0,0,0,0,0,0]
         self.print_buffer.append('evals  en      eb      output')
         for i in xrange(0,maxtries):
             solution = self.model.get_decision()

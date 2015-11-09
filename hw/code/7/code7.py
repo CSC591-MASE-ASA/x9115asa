@@ -3,7 +3,7 @@ from optimizers import *
 
 
 def main():
-    for model in [Schaffer, Kursawe, Osyczka2]:
+    for model in [Golinski]:
         mod = model()
         mod.baseline()
         for optimizer in [sa,mws]:
