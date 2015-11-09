@@ -12,6 +12,7 @@ from random import uniform
 from random import randint
 from random import random
 from sk import rdivDemo
+from sk import a12
 import math
 
 
@@ -66,33 +67,8 @@ class o():
         self.n = n
 
 def type2(era1,era2):
-    def a12(lst1,lst2):
-
-        def loop(t,t1,t2):
-            while t1.m < t1.n and t2.m < t2.n:
-                h1 = t1.l[t1.m]
-                h2 = t2.l[t2.m]
-                h3 = t2.l[t2.m+1] if t2.m+1 < t2.n else None
-                if h1 < h2:
-                    t1.m  += 1; t1.lt += t2.n - t2.m
-                elif h1 == h2:
-                    if h3 and h1 > h3:
-                        t1.lt += t2.n - t2.m  - 1
-                        t1.m  += 1; t1.eq += 1; t2.eq += 1
-                    else:
-                        t2,t1  = t1,t2
-            return t.lt*1.0, t.eq*1.0
-      #--------------------------
-        lst1 = sorted(lst1,reverse=True)
-        lst2 = sorted(lst2,reverse=True)
-        n1   = len(lst1)
-        n2   = len(lst2)
-        t1   = o(lst=lst1,m=0,eq=0,lt=0,n=n1)
-        t2   = o(lst=lst2,m=0,eq=0,lt=0,n=n2)
-        lt,eq= loop(t1, t1, t2)
-        return lt/(n1*n2) + eq/2/(n1*n2)
-
-    a12_res = a12(era1,era2)
+    a12_res = a12(era2,era1)
+    print "A12 res",a12_res
     if a12_res > 0.56:
         return 5
     else:
@@ -305,7 +281,7 @@ def differential_evolution(era_length, seed, cr, f, k_max,eras):
             # print "Yo k",k,eras
             break
 
-        print  "-------------ERA:"+ str(k/era_length) + "--------------------"
+        print "-------------ERA:"+ str(k/era_length) + "--------------------"
         print prev_era
         print "------------------------------------------------------------------"
 
@@ -314,8 +290,9 @@ def differential_evolution(era_length, seed, cr, f, k_max,eras):
 
 def test():
     x = randomassign()
-    best,era = differential_evolution(10, x, 0.4, 0.5, 1000,5)
+    best,era = differential_evolution(100, x, 0.4, 0.5, 1000,7)
     print "BEST:",best
+    print "BEST energy",dtlz7(best)
     print "last_era:",era
 
 test()
