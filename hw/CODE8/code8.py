@@ -79,8 +79,8 @@ def type2(era1,era2):
                     if h3 and h1 > h3:
                         t1.lt += t2.n - t2.m  - 1
                         t1.m  += 1; t1.eq += 1; t2.eq += 1
-                else:
-                    t2,t1  = t1,t2
+                    else:
+                        t2,t1  = t1,t2
             return t.lt*1.0, t.eq*1.0
       #--------------------------
         lst1 = sorted(lst1,reverse=True)
