@@ -6,7 +6,7 @@ def main():
     for model in [Golinski]:
         mod = model()
         mod.baseline()
-        for optimizer in [sa,mws]:
+        for optimizer in [de]:
             op = optimizer(mod)
             op.compute()
             # TODO: write code...
