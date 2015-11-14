@@ -32,10 +32,7 @@ class population:
         for i in range(self.num_candidates):
             can = candidate([])
             for j in range(num_decs):
-                if random.random() >= 0.5:
-                    can.decs.append(1)
-                else:
-                    can.decs.append(0)
+                can.decs.append(random.random())
             can.calc_fitness(self.fitness_family)
             self.candidates.append(can)
 
@@ -56,12 +53,28 @@ class population:
         return [can1, can2]
 
     def select(self):
-        return self.candidates[random.randrange(0, self.num_candidates)]
+        # weighted wheel technique
+        # First invert fitness since less fitness is better
+        # print [sum(can.fitness) for can in self.candidates]
+        temp = []
+        for i in range(0, self.num_candidates):
+            temp.append(sum(self.candidates[i].fitness))
+        lcm = LCM_List(temp)
+        for i in range(0, self.num_candidates):
+            temp[i] = lcm / temp[i]
+        sumTemp = sum(temp)
+        rand = random.random()*sumTemp
+        sumT = 0
+        for i in range(0, self.num_candidates):
+            sumT += temp[i]
+            if rand < sumT:
+                # print "selected: " + str(sum(self.candidates[i].fitness))
+                return self.candidates[i]
 
     def mutate(self, candidate):
         for i in range(0, num_decs):
             if random.random() < self.prob_mut:
-                candidate.decs[i] = candidate.decs[i] ^ 1
+                candidate.decs[i] = random.random()
         return
 
     def __repr__(self):
@@ -95,6 +108,7 @@ class GA:
             curr_pop.mutate(crs2)
             next_pop.candidates.append(crs1)
             next_pop.candidates.append(crs2)
+            # Not comparing parents with children right now
         self.generations.append(next_pop);
         self.current_generation += 1
         return
@@ -110,7 +124,8 @@ class GA:
             if(sum(curr_pop.candidates[i].fitness) > worst_fitness):
                 worst_fitness = sum(curr_pop.candidates[i].fitness)
             sum_fitness += sum(curr_pop.candidates[i].fitness)
-        print [sum(can.fitness) for can in curr_pop.candidates]
+        # print [sum(can.fitness) for can in curr_pop.candidates]
+        print "-----------------------------------"
         print "Best fitness: " + str(best_fitness)
         print "Worst fitness: " + str(worst_fitness)
         print "Avg fitness: " + str(sum_fitness / self.num_candidates)
@@ -119,4 +134,6 @@ class GA:
 ga = GA(10, dtlz.dtlz1)
 ga.randomize()
 ga.statistics()
-ga.next()
+for i in range(0, 50):
+    ga.next()
+    ga.statistics()
