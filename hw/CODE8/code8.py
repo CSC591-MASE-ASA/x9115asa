@@ -12,6 +12,7 @@ from random import uniform
 from random import randint
 from random import random
 from sk import rdivDemo
+from sk import a12
 import math
 
 
@@ -66,33 +67,8 @@ class o():
         self.n = n
 
 def type2(era1,era2):
-    def a12(lst1,lst2):
-
-        def loop(t,t1,t2):
-            while t1.m < t1.n and t2.m < t2.n:
-                h1 = t1.l[t1.m]
-                h2 = t2.l[t2.m]
-                h3 = t2.l[t2.m+1] if t2.m+1 < t2.n else None
-                if h1 < h2:
-                    t1.m  += 1; t1.lt += t2.n - t2.m
-                elif h1 == h2:
-                    if h3 and gt(h1,h3) < 0:
-                        t1.lt += t2.n - t2.m  - 1
-                        t1.m  += 1; t1.eq += 1; t2.eq += 1
-                else:
-                    t2,t1  = t1,t2
-            return t.lt*1.0, t.eq*1.0
-      #--------------------------
-        lst1 = sorted(lst1,reverse=True)
-        lst2 = sorted(lst2,reverse=True)
-        n1   = len(lst1)
-        n2   = len(lst2)
-        t1   = o(l=lst1,m=0,eq=0,lt=0,n=n1)
-        t2   = o(l=lst2,m=0,eq=0,lt=0,n=n2)
-        lt,eq= loop(t1, t1, t2)
-        return lt/(n1*n2) + eq/2/(n1*n2)
-
-    a12_res = a12(era1,era2)
+    a12_res = a12(era2,era1)
+    print "A12 res",a12_res
     if a12_res > 0.56:
         return 5
     else:
@@ -189,16 +165,16 @@ def max_walk_sat(eras,maxtries,maxchanges,threshold,p,steps,era_length,seed):
     return sb,prev_era
 
 
-def simmulated_annealing(kmax=1000,era_length,seed):
+def simmulated_annealing(kmax,era_length,seed):
 
     def P(old, new, t):
         val = (old-new)/t
         return math.exp(val)
 
     def neighbor(x):
-        xn = [:]
+        xn = x[:]
         index = randint(0,len(x)-1)
-        xn[index] = random():
+        xn[index] = random()
         return xn
 
 
@@ -214,7 +190,6 @@ def simmulated_annealing(kmax=1000,era_length,seed):
         sn = neighbor(s)
         en = dtlz7(sn)
 
-        # if en < eb:
         if type1(en,eb) == en:
             sb, eb = sn, en
 
@@ -238,30 +213,30 @@ def simmulated_annealing(kmax=1000,era_length,seed):
 
     return sb, prev_era
 
-def differential_evolution(era_length, seed, cr, f, k_max):
+def differential_evolution(era_length, seed, cr, f, k_max,eras):
     np = era_length
-    eras = 5
     k = 0
     def xPlusFyz(x,y,z):
+        sn=[]
         def smear((x1, y1, z1)):
-            x1 = x1 if cr <= r() else x1 + f*(y1-z1)
+            x1 = x1 if cr <= random() else x1 + f*(y1-z1)
             return x1
-        for i in len(x):
-            sn[i] = [smear(these) for these in zip(x,y,z)]
+        for i in xrange(0,len(x)):
+            sn = [smear(these) for these in zip(x,y,z)]
         return sn
 
     def create_frontier(seed):
         frontier = []
         frontier.append(seed)
         for i in xrange(1, np):
-            frontier.append(randomassign)
+            frontier.append(randomassign())
         return frontier
 
     def generate_items(lst, avoid=None):
         def unique_item():
             x = avoid
             while id(x) in seen:
-              x = lst[  int(random.uniform(0,len(lst))) ]
+              x = lst[  int(uniform(0,len(lst))) ]
             seen.append( id(x) )
             return x
 
@@ -277,8 +252,13 @@ def differential_evolution(era_length, seed, cr, f, k_max):
         return res
 
     frontier = create_frontier(seed)
+    print "----------------------initial frontier-------------------------"
+    print frontier
+    print "---------------------------------------------------------------"
     s = sb = seed
     e = eb = dtlz7(seed)
+
+    all_eras = []
 
     prev_era = []
     this_era = []
@@ -287,16 +267,32 @@ def differential_evolution(era_length, seed, cr, f, k_max):
             x, y, z = generate_items(frontier)
             sn = xPlusFyz(x,y,z)
             en = dtlz7(sn)
-            if type1(en,eb) == en:
+            if type1(sb,sn) == sn:
                 sb, eb = sn, en
-            if type1(en, e) == en:
-                frontier[n] = sn
+            if type1(candidate,sn) == sn:
+                frontier[i] = sn
             k = k + 1
         this_era = era_energy(frontier)
-        eras = type2(prev_era,this_era)
+        if len(prev_era) > 0:
+            eras = eras + type2(prev_era,this_era)
         prev_era = this_era[:]
         this_era = []
         if k > k_max or eras < 1:
+            # print "Yo k",k,eras
             break
 
+        print "-------------ERA:"+ str(k/era_length) + "--------------------"
+        print prev_era
+        print "------------------------------------------------------------------"
+
     return sb, prev_era
+
+
+def test():
+    x = randomassign()
+    best,era = differential_evolution(100, x, 0.4, 0.5, 1000,7)
+    print "BEST:",best
+    print "BEST energy",dtlz7(best)
+    print "last_era:",era
+
+test()
