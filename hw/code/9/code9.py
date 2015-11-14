@@ -5,6 +5,27 @@ import math
 num_objs = 2
 num_decs = 10
 
+def product(arr):
+    mul = 1
+    for i in range(0, len(arr)):
+        mul *= arr[i]
+    return mul
+
+def GCD(a,b):
+	a = abs(a)
+	b = abs(b)
+        while a:
+                a, b = b%a, a
+        return b
+
+def GCD_List(list):
+	return reduce(GCD, list)
+
+def LCM_List(list):
+    prod = product(list)
+    lcm = prod / GCD_List(list)
+    return lcm
+
 class candidate:
     def __init__(self, decs):
         self.decs = decs
@@ -14,8 +35,11 @@ class candidate:
         self.fitness = fitness_family(self.decs, num_objs, len(self.decs))
         return
 
+    def __lt__(self, other):
+        return sum(self.fitness) < sum(other.fitness)
+
     def __repr__(self):
-        return "".join([str(x) for x in self.decs])
+        return ",".join([str(x) for x in self.decs])
 
 
 class population:
@@ -53,11 +77,25 @@ class population:
         return [can1, can2]
 
     def select(self):
-        # weighted wheel technique
+        return self.weighted_wheel()
+
+    def mutate(self, candidate):
+        for i in range(0, num_decs):
+            if random.random() < self.prob_mut:
+                candidate.decs[i] = random.random()
+        return
+
+    def __repr__(self):
+        return ",".join([can.__repr__() for can in self.candidates])
+
+    def weighted_wheel(self):
+        # weighted wheel technique of selection
         # First invert fitness since less fitness is better
         # print [sum(can.fitness) for can in self.candidates]
         temp = []
         for i in range(0, self.num_candidates):
+            # print self.candidates[i]
+            # print self.candidates[i].fitness
             temp.append(sum(self.candidates[i].fitness))
         lcm = LCM_List(temp)
         for i in range(0, self.num_candidates):
@@ -71,19 +109,10 @@ class population:
                 # print "selected: " + str(sum(self.candidates[i].fitness))
                 return self.candidates[i]
 
-    def mutate(self, candidate):
-        for i in range(0, num_decs):
-            if random.random() < self.prob_mut:
-                candidate.decs[i] = random.random()
-        return
-
-    def __repr__(self):
-        return ",".join([can.__repr__() for can in self.candidates])
-
 class GA:
     generations = []
     fitness_family = None
-    num_candidates = 10
+    num_candidates = 100
     current_generation = 0
 
     def __init__(self, num_candidates = 10, fitness_family = dtlz.dtlz1):
@@ -108,7 +137,15 @@ class GA:
             curr_pop.mutate(crs2)
             next_pop.candidates.append(crs1)
             next_pop.candidates.append(crs2)
-            # Not comparing parents with children right now
+            # if crs1 < can1:
+            #     next_pop.candidates.append(crs1)
+            # else:
+            #     next_pop.candidates.append(can1)
+            # if crs2 < can2:
+            #     next_pop.candidates.append(crs2)
+            # else:
+            #     next_pop.candidates.append(can2)
+            #Not comparing parents with children right now
         self.generations.append(next_pop);
         self.current_generation += 1
         return
@@ -125,15 +162,20 @@ class GA:
                 worst_fitness = sum(curr_pop.candidates[i].fitness)
             sum_fitness += sum(curr_pop.candidates[i].fitness)
         # print [sum(can.fitness) for can in curr_pop.candidates]
-        print "-----------------------------------"
-        print "Best fitness: " + str(best_fitness)
-        print "Worst fitness: " + str(worst_fitness)
-        print "Avg fitness: " + str(sum_fitness / self.num_candidates)
+        # print "-----------------------------------"
+        # print "Best fitness: " + str(best_fitness)
+        # print "Worst fitness: " + str(worst_fitness)
+        # print "Avg fitness: " + str(sum_fitness / self.num_candidates)
+        strStats = ""
+        strStats += str(best_fitness) + ","
+        strStats += str(worst_fitness) + ","
+        strStats += str(sum_fitness / self.num_candidates)
+        print strStats
         return
 
-ga = GA(10, dtlz.dtlz1)
+ga = GA(100, dtlz.dtlz1)
 ga.randomize()
 ga.statistics()
-for i in range(0, 50):
+for i in range(0, 100):
     ga.next()
     ga.statistics()
