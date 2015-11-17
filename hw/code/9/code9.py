@@ -30,13 +30,16 @@ class candidate:
     def __init__(self, decs):
         self.decs = decs
         self.fitness = None
+        self.dom_count = 0
 
     def calc_fitness(self, fitness_family):
         self.fitness = fitness_family(self.decs, num_objs, len(self.decs))
         return
 
-    def __lt__(self, other):
-        return sum(self.fitness) < sum(other.fitness)
+    def __gt__(self, other):
+        better = any([x < y for x,y in zip(self.fitness, other.fitness)])
+        worse = any([x > y for x,y in zip(self.fitness, other.fitness)])
+        return better and not worse
 
     def __repr__(self):
         return ",".join([str(x) for x in self.decs])
@@ -59,6 +62,7 @@ class population:
                 can.decs.append(random.random())
             can.calc_fitness(self.fitness_family)
             self.candidates.append(can)
+        self.ap_binary_dom()
 
     def crossover(self, candidate1, candidate2):
         crossover_point = random.randrange(0, num_decs)
@@ -88,25 +92,31 @@ class population:
     def __repr__(self):
         return ",".join([can.__repr__() for can in self.candidates])
 
+    def ap_binary_dom(self):
+        candidates = self.candidates
+        n = self.num_candidates
+
+        for i in range(0, n):
+            for j in range(0, n):
+                if i == j:
+                    continue
+                if candidates[i] > candidates[j]:
+                    candidates[i].dom_count += 1
+
     def weighted_wheel(self):
         # weighted wheel technique of selection
-        # First invert fitness since less fitness is better
         # print [sum(can.fitness) for can in self.candidates]
-        temp = []
-        for i in range(0, self.num_candidates):
-            # print self.candidates[i]
-            # print self.candidates[i].fitness
-            temp.append(sum(self.candidates[i].fitness))
-        lcm = LCM_List(temp)
-        for i in range(0, self.num_candidates):
-            temp[i] = lcm / temp[i]
-        sumTemp = sum(temp)
+        # print [x.dom_count for x in self.candidates]
+        sumTemp = sum([x.dom_count for x in self.candidates])
+        if sumTemp == 0:
+            return self.candidates[random.randint(0, self.num_candidates-1)]
         rand = random.random()*sumTemp
         sumT = 0
         for i in range(0, self.num_candidates):
-            sumT += temp[i]
+            sumT += self.candidates[i].dom_count
             if rand < sumT:
                 # print "selected: " + str(sum(self.candidates[i].fitness))
+                # print self.candidates[i].dom_count
                 return self.candidates[i]
 
 class GA:
@@ -146,7 +156,8 @@ class GA:
             # else:
             #     next_pop.candidates.append(can2)
             #Not comparing parents with children right now
-        self.generations.append(next_pop);
+        next_pop.ap_binary_dom()
+        self.generations.append(next_pop)
         self.current_generation += 1
         return
 
