@@ -168,9 +168,103 @@ class mws(Optimizer):
 
     
     
+class de(Optimizer):
+    def __init__(self, model):
+        Optimizer.__init__(self)
+        self.name='Differential Evolution'
+        self.model=model
+    def type1(self, x,y):
+        if x <= y:
+            return x
+        else:
+            return y
+    def compute(self):
+        era_length = 100
+        seed = self.model.get_decision()
+        mw_maxtries = 500
+        mw_maxchanges = 100
+        mw_p = 0.5
+        mw_threshold = 2
+        mw_steps = 10
+        era_collection = []
+        cr = 0.3
+        f  = 0.5
+        de_npExpand = 10
+        kmax=1000
+        np = era_length
+        eras = 5
+        k = 0
+        def mutate(these):
+            sn=[]
+            def smear(vals, idx):
+                x1 = vals[0] + f*(vals[1]-vals[2])
+                if x1 >= self.model.lower_bounds[idx] and x1<=self.model.upper_bounds[idx]:
+                    return x1
+                else:
+                    return vals[random.randrange(0, len(vals)-1)]
+            if cr < random.random():
+                return these[0]
+            for i in xrange(0,len(x)):
+                sn = [smear(vals, i) for vals in zip(x,y,z)]
+            return sn
+    
+        def create_frontier(seed):
+            frontier = []
+            frontier.append(seed)
+            for i in xrange(1, np):
+                frontier.append(self.model.get_decision())
+            return frontier
+    
+        def generate_items(lst, avoid=None):
+            def unique_item():
+                x = avoid
+                while id(x) in seen:
+                  x = lst[  int(random.uniform(0,len(lst))) ]
+                seen.append( id(x) )
+                return x
+    
+            assert len(lst) > 4
+            avoid = avoid or lst[0]
+            seen  = [ id(avoid) ]
+            return unique_item(), unique_item(), unique_item()
+    
+        self.print_buffer.append('Model: '+self.model.name)
+        self.print_buffer.append('Optimizer: '+self.name)
+        frontier = create_frontier(seed)
+        sb = seed
+        e = eb = self.model.normalize(self.model.energy(seed))
+        self.print_buffer.append('k     ecan      en        eb       output')
+        op=''
+        while k < kmax :
+            for i,candidate in enumerate(frontier):
+                e = self.model.normalize(self.model.energy(candidate))
+                x, y, z = generate_items(frontier)
+                sn=x
+                sn = mutate((x,y,z)) #mutate function
+                en = self.model.normalize(self.model.energy(sn))
+                if k%25==0:
+                    if op:
+                        self.print_buffer.append(op)
+                    op=''
+                    op = "{0:04d}, {1:0.2E}, {2:0.2E}, {3:0.2E} ".format(k, e, en, eb)
+                out='.'
+                if self.model.eval(sn) and en < e:
+                    frontier[i] = sn
+                    out='+'
+                if self.model.eval(sn) and en < eb:
+                    sb, eb = sn, en
+                    out='!'
+                op+=out  
+                k = k + 1
+        self.print_buffer.append('')
+        self.print_buffer.append('Final Solution: ')
+        self.print_buffer.append('eb = {0:0.2E}'.format(eb))
+        self.print_buffer.append('sb = {0}'.format([ '%.2f' % elem for elem in sb ]))
+        self.print_buffer.append('_'*51)
+        self.print_output()
+        return sb, eb
 
-
-
+        
 # Given min to max values for every value, try steps of (max - min)/steps for, say, steps=10
 
 

@@ -7,7 +7,7 @@ class Model:
         self.no_of_objecives=2
         self.max_energy = -10**4
         self.min_energy = 10**4
-        self.baseline_runs=10000
+        self.baseline_runs=100000
         self.upper_bounds=[]
         self.lower_bounds=[]
         self.name = 'Generic name'
@@ -122,7 +122,9 @@ class Golinski(Model):
             if constraints[i] > 0:
                 return False
         return True
-    def get_objectives(self, decs=[0,0,0,0,0,0,0]):
-       f1 = 0.7854*decs[0]*decs[1]**2*(10*decs[2]**2/3+14.933*decs[2]-43.0934) - 1.508*decs[0]*(decs[5]**2+decs[6]**2) + 7.477*(decs[5]**3+decs[6]**3)+0.7854*(decs[3]*decs[5]**2+decs[4]*decs[6]**2)
-       f2 = (((745*decs[3]/(decs[1]*decs[2]))**2+1.69*10**7)**0.5)/(0.1*decs[5]**3)-1300
+    def get_objectives(self, decs=None):
+       f1=f2=0
+       if decs:
+           f1 = 0.7854*decs[0]*decs[1]**2*(10*decs[2]**2/3+14.933*decs[2]-43.0934) - 1.508*decs[0]*(decs[5]**2+decs[6]**2) + 7.477*(decs[5]**3+decs[6]**3)+0.7854*(decs[3]*decs[5]**2+decs[4]*decs[6]**2)
+           f2 = (((745*decs[3]/(decs[1]*decs[2]))**2+1.69*10**7)**0.5)/(0.1*decs[5]**3)-1300
        return f1, f2

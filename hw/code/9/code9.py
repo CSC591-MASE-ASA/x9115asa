@@ -5,17 +5,44 @@ import math
 num_objs = 2
 num_decs = 10
 
+def product(arr):
+    mul = 1
+    for i in range(0, len(arr)):
+        mul *= arr[i]
+    return mul
+
+def GCD(a,b):
+	a = abs(a)
+	b = abs(b)
+        while a:
+                a, b = b%a, a
+        return b
+
+def GCD_List(list):
+	return reduce(GCD, list)
+
+def LCM_List(list):
+    prod = product(list)
+    lcm = prod / GCD_List(list)
+    return lcm
+
 class candidate:
     def __init__(self, decs):
         self.decs = decs
         self.fitness = None
+        self.dom_count = 0
 
     def calc_fitness(self, fitness_family):
         self.fitness = fitness_family(self.decs, num_objs, len(self.decs))
         return
 
+    def __gt__(self, other):
+        better = any([x < y for x,y in zip(self.fitness, other.fitness)])
+        worse = any([x > y for x,y in zip(self.fitness, other.fitness)])
+        return better and not worse
+
     def __repr__(self):
-        return "".join([str(x) for x in self.decs])
+        return ",".join([str(x) for x in self.decs])
 
 
 class population:
@@ -32,12 +59,10 @@ class population:
         for i in range(self.num_candidates):
             can = candidate([])
             for j in range(num_decs):
-                if random.random() >= 0.5:
-                    can.decs.append(1)
-                else:
-                    can.decs.append(0)
+                can.decs.append(random.random())
             can.calc_fitness(self.fitness_family)
             self.candidates.append(can)
+        self.ap_binary_dom()
 
     def crossover(self, candidate1, candidate2):
         crossover_point = random.randrange(0, num_decs)
@@ -56,21 +81,48 @@ class population:
         return [can1, can2]
 
     def select(self):
-        return self.candidates[random.randrange(0, self.num_candidates)]
+        return self.weighted_wheel()
 
     def mutate(self, candidate):
         for i in range(0, num_decs):
             if random.random() < self.prob_mut:
-                candidate.decs[i] = candidate.decs[i] ^ 1
+                candidate.decs[i] = random.random()
         return
 
     def __repr__(self):
         return ",".join([can.__repr__() for can in self.candidates])
 
+    def ap_binary_dom(self):
+        candidates = self.candidates
+        n = self.num_candidates
+
+        for i in range(0, n):
+            for j in range(0, n):
+                if i == j:
+                    continue
+                if candidates[i] > candidates[j]:
+                    candidates[i].dom_count += 1
+
+    def weighted_wheel(self):
+        # weighted wheel technique of selection
+        # print [sum(can.fitness) for can in self.candidates]
+        # print [x.dom_count for x in self.candidates]
+        sumTemp = sum([x.dom_count for x in self.candidates])
+        if sumTemp == 0:
+            return self.candidates[random.randint(0, self.num_candidates-1)]
+        rand = random.random()*sumTemp
+        sumT = 0
+        for i in range(0, self.num_candidates):
+            sumT += self.candidates[i].dom_count
+            if rand < sumT:
+                # print "selected: " + str(sum(self.candidates[i].fitness))
+                # print self.candidates[i].dom_count
+                return self.candidates[i]
+
 class GA:
     generations = []
     fitness_family = None
-    num_candidates = 10
+    num_candidates = 100
     current_generation = 0
 
     def __init__(self, num_candidates = 10, fitness_family = dtlz.dtlz1):
@@ -95,13 +147,46 @@ class GA:
             curr_pop.mutate(crs2)
             next_pop.candidates.append(crs1)
             next_pop.candidates.append(crs2)
-        self.generations.append(next_pop);
+            # if crs1 < can1:
+            #     next_pop.candidates.append(crs1)
+            # else:
+            #     next_pop.candidates.append(can1)
+            # if crs2 < can2:
+            #     next_pop.candidates.append(crs2)
+            # else:
+            #     next_pop.candidates.append(can2)
+            #Not comparing parents with children right now
+        next_pop.ap_binary_dom()
+        self.generations.append(next_pop)
         self.current_generation += 1
         return
 
-    def statistics():
+    def statistics(self):
+        curr_pop = self.generations[self.current_generation];
+        best_fitness = sum(curr_pop.candidates[0].fitness)
+        worst_fitness = sum(curr_pop.candidates[0].fitness)
+        sum_fitness = 0
+        for i in range(0, self.num_candidates):
+            if(sum(curr_pop.candidates[i].fitness) < best_fitness):
+                best_fitness = sum(curr_pop.candidates[i].fitness)
+            if(sum(curr_pop.candidates[i].fitness) > worst_fitness):
+                worst_fitness = sum(curr_pop.candidates[i].fitness)
+            sum_fitness += sum(curr_pop.candidates[i].fitness)
+        # print [sum(can.fitness) for can in curr_pop.candidates]
+        # print "-----------------------------------"
+        # print "Best fitness: " + str(best_fitness)
+        # print "Worst fitness: " + str(worst_fitness)
+        # print "Avg fitness: " + str(sum_fitness / self.num_candidates)
+        strStats = ""
+        strStats += str(best_fitness) + ","
+        strStats += str(worst_fitness) + ","
+        strStats += str(sum_fitness / self.num_candidates)
+        print strStats
         return
 
-ga = GA(10, dtlz.dtlz1)
+ga = GA(100, dtlz.dtlz1)
 ga.randomize()
-ga.next()
+ga.statistics()
+for i in range(0, 100):
+    ga.next()
+    ga.statistics()
