@@ -2,9 +2,6 @@ import dtlz
 import random
 import math
 
-num_objs = 2
-num_decs = 10
-
 def product(arr):
     mul = 1
     for i in range(0, len(arr)):
@@ -27,13 +24,15 @@ def LCM_List(list):
     return lcm
 
 class candidate:
+    num_objs = 10
+
     def __init__(self, decs):
         self.decs = decs
         self.fitness = None
         self.dom_count = 0
 
     def calc_fitness(self, fitness_family):
-        self.fitness = fitness_family(self.decs, num_objs, len(self.decs))
+        self.fitness = fitness_family(self.decs, self.num_objs, len(self.decs))
         return
 
     def __gt__(self, other):
@@ -49,6 +48,7 @@ class population:
     num_candidates = 10;
     fitness_family = None
     prob_mut = 0.05
+    num_decs = 2
 
     def __init__(self, num_candidates = 10, fitness_family = dtlz.dtlz1):
         self.candidates = []
@@ -58,20 +58,20 @@ class population:
     def randomize(self):
         for i in range(self.num_candidates):
             can = candidate([])
-            for j in range(num_decs):
+            for j in range(self.num_decs):
                 can.decs.append(random.random())
             can.calc_fitness(self.fitness_family)
             self.candidates.append(can)
         self.ap_binary_dom()
 
     def crossover(self, candidate1, candidate2):
-        crossover_point = random.randrange(0, num_decs)
+        crossover_point = random.randrange(0, self.num_decs)
         decs1 = []
         decs2 = []
         for i in range(0, crossover_point):
             decs1.append(candidate1.decs[i])
             decs2.append(candidate2.decs[i])
-        for i in range(crossover_point, num_decs):
+        for i in range(crossover_point, self.num_decs):
             decs1.append(candidate2.decs[i])
             decs2.append(candidate1.decs[i])
         can1 = candidate(decs1)
@@ -84,7 +84,7 @@ class population:
         return self.weighted_wheel()
 
     def mutate(self, candidate):
-        for i in range(0, num_decs):
+        for i in range(0, self.num_decs):
             if random.random() < self.prob_mut:
                 candidate.decs[i] = random.random()
         return
@@ -105,8 +105,6 @@ class population:
 
     def weighted_wheel(self):
         # weighted wheel technique of selection
-        # print [sum(can.fitness) for can in self.candidates]
-        # print [x.dom_count for x in self.candidates]
         sumTemp = sum([x.dom_count for x in self.candidates])
         if sumTemp == 0:
             return self.candidates[random.randint(0, self.num_candidates-1)]
@@ -115,19 +113,19 @@ class population:
         for i in range(0, self.num_candidates):
             sumT += self.candidates[i].dom_count
             if rand < sumT:
-                # print "selected: " + str(sum(self.candidates[i].fitness))
-                # print self.candidates[i].dom_count
                 return self.candidates[i]
 
 class GA:
-    generations = []
     fitness_family = None
     num_candidates = 100
-    current_generation = 0
 
-    def __init__(self, num_candidates = 10, fitness_family = dtlz.dtlz1):
+    def __init__(self, num_candidates = 10, fitness_family = dtlz.dtlz1, num_objs =10, num_decs = 2):
+        self.generations = []
+        self.current_generation = 0
         self.num_candidates = num_candidates
         self.fitness_family = fitness_family
+        candidate.num_objs = num_objs
+        population.num_decs = num_decs
         return
 
     def randomize(self):
@@ -184,9 +182,24 @@ class GA:
         print strStats
         return
 
-ga = GA(100, dtlz.dtlz1)
-ga.randomize()
-ga.statistics()
-for i in range(0, 100):
-    ga.next()
-    ga.statistics()
+num_candidates = 100
+num_generations = 1000
+objs = [2,4,6,8]
+decs = [10,20,40]
+fitness_family = [dtlz.dtlz1, dtlz.dtlz3, dtlz.dtlz5, dtlz.dtlz7]
+
+def run_all():
+    for num_objs in objs:
+        for num_decs in decs:
+            for ff in fitness_family:
+
+                ga = GA(num_candidates, ff, num_objs, num_decs)
+                ga.randomize()
+                ga.statistics()
+                for i in range(0, num_generations):
+                    ga.next()
+                    ga.statistics()
+
+                print ""
+
+run_all()
