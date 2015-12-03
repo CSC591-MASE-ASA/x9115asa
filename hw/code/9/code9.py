@@ -182,11 +182,34 @@ class GA:
         print strStats
         return
 
+    def skdata(self):
+		if self.current_generation % 100 != 99:
+			return
+		genStr = ""
+		genStr += "gen" + str((self.current_generation+1)/100) + " "
+		for pop in range(self.current_generation - 99, self.current_generation+1):
+			curr_pop = self.generations[pop]
+			for i in range(0, self.num_candidates):
+				genStr += str(curr_pop.candidates[i].fitness[0]) + " "
+		print genStr
+		return
+
 num_candidates = 100
 num_generations = 1000
 objs = [2,4,6,8]
 decs = [10,20,40]
 fitness_family = [dtlz.dtlz1, dtlz.dtlz3, dtlz.dtlz5, dtlz.dtlz7]
+ff_names = ["dtlz1", "dtlz3", "dtlz5", "dtlz7"]
+
+def init():
+    for num_objs in objs:
+        for num_decs in decs:
+            for ff in ff_names:
+                for i in range(0, num_objs):
+                    f = open('data/{0}-{1}-{2}-f{3}.dat'.format(num_objs, num_decs, ff, i), 'w')
+                    f.close()
+                f = open('data/{0}-{1}-{2}-fsum.dat'.format(num_objs, num_decs, ff), 'w')
+                    f.close()
 
 def run_all():
     for num_objs in objs:
@@ -195,11 +218,19 @@ def run_all():
 
                 ga = GA(num_candidates, ff, num_objs, num_decs)
                 ga.randomize()
-                ga.statistics()
+                #ga.statistics()
                 for i in range(0, num_generations):
                     ga.next()
                     ga.statistics()
 
-                print ""
+def run_one(num_objs, num_decs, ff):
+	ga = GA(num_candidates, ff, num_objs, num_decs)
+	ga.randomize()
+	#ga.statistics()
+	for i in range(0, num_generations):
+		ga.next()
+		ga.skdata()
 
-run_all()
+init()
+#run_all()
+run_one(4, 10, dtlz.dtlz1)
