@@ -1,6 +1,7 @@
 import dtlz
 import random
 import math
+import hve
 
 def product(arr):
     mul = 1
@@ -145,15 +146,6 @@ class GA:
             curr_pop.mutate(crs2)
             next_pop.candidates.append(crs1)
             next_pop.candidates.append(crs2)
-            # if crs1 < can1:
-            #     next_pop.candidates.append(crs1)
-            # else:
-            #     next_pop.candidates.append(can1)
-            # if crs2 < can2:
-            #     next_pop.candidates.append(crs2)
-            # else:
-            #     next_pop.candidates.append(can2)
-            #Not comparing parents with children right now
         next_pop.ap_binary_dom()
         self.generations.append(next_pop)
         self.current_generation += 1
@@ -170,11 +162,6 @@ class GA:
             if(sum(curr_pop.candidates[i].fitness) > worst_fitness):
                 worst_fitness = sum(curr_pop.candidates[i].fitness)
             sum_fitness += sum(curr_pop.candidates[i].fitness)
-        # print [sum(can.fitness) for can in curr_pop.candidates]
-        # print "-----------------------------------"
-        # print "Best fitness: " + str(best_fitness)
-        # print "Worst fitness: " + str(worst_fitness)
-        # print "Avg fitness: " + str(sum_fitness / self.num_candidates)
         strStats = ""
         strStats += str(best_fitness) + ","
         strStats += str(worst_fitness) + ","
@@ -194,6 +181,16 @@ class GA:
 		print genStr
 		return
 
+    def hvdata(self, hveCurr):
+        hveCurr.add_data(self.generations[self.current_generation])
+    
+    def initFile(self):
+        return
+    
+    def writeToFile(self):
+        return
+		
+
 num_candidates = 100
 num_generations = 1000
 objs = [2,4,6,8]
@@ -209,13 +206,12 @@ def init():
                     f = open('data/{0}-{1}-{2}-f{3}.dat'.format(num_objs, num_decs, ff, i), 'w')
                     f.close()
                 f = open('data/{0}-{1}-{2}-fsum.dat'.format(num_objs, num_decs, ff), 'w')
-                    f.close()
+                f.close()
 
 def run_all():
     for num_objs in objs:
         for num_decs in decs:
             for ff in fitness_family:
-
                 ga = GA(num_candidates, ff, num_objs, num_decs)
                 ga.randomize()
                 #ga.statistics()
@@ -223,14 +219,15 @@ def run_all():
                     ga.next()
                     ga.statistics()
 
-def run_one(num_objs, num_decs, ff):
-	ga = GA(num_candidates, ff, num_objs, num_decs)
+def run_one(num_objs, num_decs, fitness_family):
+	ga = GA(num_candidates, fitness_family, num_objs, num_decs)
+	ga.initFile()
 	ga.randomize()
-	#ga.statistics()
+	hveCurr = hve.HVE()
 	for i in range(0, num_generations):
 		ga.next()
-		ga.skdata()
+		ga.hvdata(hveCurr)
+		ga.writeToFile()
+	hveCurr.pareto_last()
 
-init()
-#run_all()
-run_one(4, 10, dtlz.dtlz1)
+run_one(2, 10, dtlz.dtlz1)
