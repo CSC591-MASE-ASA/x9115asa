@@ -190,9 +190,6 @@ class GA:
     def writeToFile(self):
         return
 		
-
-num_candidates = 100
-num_generations = 1000
 objs = [2,4,6,8]
 decs = [10,20,40]
 fitness_family = [dtlz.dtlz1, dtlz.dtlz3, dtlz.dtlz5, dtlz.dtlz7]
@@ -219,7 +216,7 @@ def run_all():
                     ga.next()
                     ga.statistics()
 
-def run_one(num_objs, num_decs, fitness_family):
+def run_one(num_objs, num_decs, fitness_family, num_candidates=10, num_generations=1000):
 	ga = GA(num_candidates, fitness_family, num_objs, num_decs)
 	ga.initFile()
 	ga.randomize()
@@ -230,4 +227,4 @@ def run_one(num_objs, num_decs, fitness_family):
 		ga.writeToFile()
 	hveCurr.pareto_last()
 
-run_one(2, 10, dtlz.dtlz1)
+run_one(num_objs=2, num_decs=10, fitness_family=dtlz.dtlz1, num_candidates=10, num_generations=1000)
