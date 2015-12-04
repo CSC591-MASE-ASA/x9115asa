@@ -3,6 +3,8 @@ import random
 class HVE:
     def __init__(self):
         self.generations = []
+        self.hyper_vol = 0
+        self.spread = []
 
     def add_data(self, generation):
         self.generations.append(generation)
@@ -55,6 +57,6 @@ class HVE:
             if flag:
                 del fron_cans[j]
         
-        print "Hyper volume: " + str((num_cans-len(fron_cans))/float(num_cans))
-        print "Spread: " + str([x-y for x,y in zip(spread_max, spread_min)])
+        self.hyper_vol = (num_cans-len(fron_cans))/float(num_cans)
+        self.spread = [x-y for x,y in zip(spread_max, spread_min)]
                     

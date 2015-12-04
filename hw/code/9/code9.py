@@ -189,6 +189,17 @@ class GA:
     
     def writeToFile(self):
         return
+    
+    def run(self, num_generations=1000):
+        self.initFile()
+        self.randomize()
+        hveCurr = hve.HVE()
+        for i in range(0, num_generations):
+            self.next()
+            self.hvdata(hveCurr)
+            self.writeToFile()
+        hveCurr.pareto_last()
+        return hveCurr
 		
 objs = [2,4,6,8]
 decs = [10,20,40]
@@ -216,15 +227,7 @@ def run_all():
                     ga.next()
                     ga.statistics()
 
-def run_one(num_objs, num_decs, fitness_family, num_candidates=10, num_generations=1000):
-	ga = GA(num_candidates, fitness_family, num_objs, num_decs)
-	ga.initFile()
-	ga.randomize()
-	hveCurr = hve.HVE()
-	for i in range(0, num_generations):
-		ga.next()
-		ga.hvdata(hveCurr)
-		ga.writeToFile()
-	hveCurr.pareto_last()
-
-run_one(num_objs=2, num_decs=10, fitness_family=dtlz.dtlz1, num_candidates=10, num_generations=1000)
+ga = GA(num_candidates=100, fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10)
+hve1 = ga.run(num_generations=1000)
+print "Hyper volume: " + str(hve1.hyper_vol)
+print "Spread: " + str(hve1.spread)
