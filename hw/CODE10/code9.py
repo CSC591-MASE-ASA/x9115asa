@@ -24,7 +24,7 @@ class candidate:
         return True
 
     def __repr__(self):
-        return ",".join([str(x) for x in self.decs])
+        return 'Candidate: ['+",".join([str(x) for x in self.decs])+']\n'
 
 
 class population:
@@ -37,6 +37,7 @@ class population:
         self.candidates = []
         self.num_candidates = num_candidates
         self.fitness_family = fitness_family
+        self.pop_paretho = []
 
     def randomize(self):
         for i in range(self.num_candidates):
@@ -74,24 +75,26 @@ class population:
     def ap_binary_dom(self):
         candidates = self.candidates
         n = self.num_candidates
-        for i in xrange(n):
-            for j in xrange(n):
-                if i == j:
-                    continue
-                if candidates[i] > candidates[j]:
-                    candidates[i].dom_count += 1
+        for candidate1 in candidates:
+            can_dominates_all = True
+            for candidate2 in candidates:
+                if candidate2 > candidate1:
+                    can_dominates_all = False
+                    break
+            if can_dominates_all:
+                self.pop_paretho.append(candidate1)
 
-    def weighted_wheel(self):
-        # weighted wheel technique of selection
-        sumTemp = sum([x.dom_count for x in self.candidates])
-        if sumTemp == 0:
-            return self.candidates[random.randint(0, self.num_candidates-1)]
-        rand = random.random()*sumTemp
-        sumT = 0
-        for i in xrange(self.num_candidates):
-            sumT += self.candidates[i].dom_count
-            if rand < sumT:
-                return self.candidates[i]
+    #def weighted_wheel(self):
+    #    # weighted wheel technique of selection
+    #    sumTemp = sum([x.dom_count for x in self.candidates])
+    #    if sumTemp == 0:
+    #        return self.candidates[random.randint(0, self.num_candidates-1)]
+    #    rand = random.random()*sumTemp
+    #    sumT = 0
+    #    for i in xrange(self.num_candidates):
+    #        sumT += self.candidates[i].dom_count
+    #        if rand < sumT:
+    #            return self.candidates[i]
 
 class GA:
     fitness_family = None
@@ -102,6 +105,7 @@ class GA:
         self.num_candidates = int(num_candidates)
         self.fitness_family = fitness_family
         self.num_generations = int(num_generations)
+        self.paretho_frontier = []
         candidate.num_objs = num_objs
         population.num_decs = num_decs
         population.prob_mut = prob_mut
@@ -110,20 +114,33 @@ class GA:
         gen1 = population(self.num_candidates, self.fitness_family)
         gen1.randomize()
         self.generations.append(gen1)
+        self.paretho_frontier.extend(gen1.pop_paretho)
         return
-
+    def update_paretho(self, new_paretho):
+        add_new = []
+        for old in self.paretho_frontier:
+            for new in new_paretho:
+                if new > old:
+                    self.paretho_frontier.remove(old)
+                    add_new.append(new)
+                    break
+        self.paretho_frontier.extend(add_new)
     def next(self):
         curr_pop = self.generations[self.current_generation];
         next_pop = population(self.num_candidates, self.fitness_family)
         for i in range(0, self.num_candidates, 2):
-            can1 = curr_pop.weighted_wheel()
-            can2 = curr_pop.weighted_wheel()
+            paretho_idx = random.sample(xrange(len(self.paretho_frontier)), 2)
+            can1 = self.paretho_frontier[paretho_idx[0]]
+            can2 = self.paretho_frontier[paretho_idx[1]]
+            #pick from frontier
+
             [crs1, crs2] = curr_pop.crossover(can1, can2)
             curr_pop.mutate(crs1)
             curr_pop.mutate(crs2)
             next_pop.candidates.append(crs1)
             next_pop.candidates.append(crs2)
         next_pop.ap_binary_dom()
+        self.update_paretho(next_pop.pop_paretho)
         self.generations.append(next_pop)
         self.current_generation += 1
         return
@@ -147,16 +164,16 @@ class GA:
         return
 
     def skdata(self):
-		if self.current_generation % 100 != 99:
-			return
-		genStr = ""
-		genStr += "gen" + str((self.current_generation+1)/100) + " "
-		for pop in range(self.current_generation - 99, self.current_generation+1):
-			curr_pop = self.generations[pop]
-			for i in range(0, self.num_candidates):
-				genStr += str(curr_pop.candidates[i].fitness[0]) + " "
-		print genStr
-		return
+        if self.current_generation % 100 != 99:
+            return
+        genStr = ""
+        genStr += "gen" + str((self.current_generation+1)/100) + " "
+        for pop in range(self.current_generation - 99, self.current_generation+1):
+            curr_pop = self.generations[pop]
+            for i in range(0, self.num_candidates):
+                genStr += str(curr_pop.candidates[i].fitness[0]) + " "
+        print genStr
+        return
 
     def hvdata(self, hveCurr):
         hveCurr.add_data(self.generations[self.current_generation])
@@ -175,7 +192,7 @@ class GA:
             self.next()
             self.hvdata(hveCurr)
             self.writeToFile()
-        hveCurr.pareto_last()
+        hveCurr.pareto_last(self.paretho_frontier)
         return hveCurr
 		
 objs = [2,4,6,8]
