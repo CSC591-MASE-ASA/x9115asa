@@ -2,6 +2,7 @@ import dtlz
 import random
 import math
 import hve
+import sys
 
 def product(arr):
     mul = 1
@@ -199,8 +200,7 @@ class GA:
             self.next()
             self.hvdata(hveCurr)
             self.writeToFile()
-        hveCurr.pareto_last()
-        return hveCurr
+        return hveCurr.pareto_last()
 		
 objs = [2,4,6,8]
 decs = [10,20,40]
@@ -227,8 +227,28 @@ def run_all():
                 for i in range(0, num_generations):
                     ga.next()
                     ga.statistics()
+                    
+def run_one_n_times():
+    results = []
+    num_runs = 20
+    for i in range(0, num_runs):
+        sys.stderr.write("Run " + str(i) + "\n")
+        ga = GA(num_candidates=100, fitness_family=dtlz.dtlz1, num_objs=8, num_decs=20)
+        hve_res = ga.run(num_generations=1000)
+        results.append(hve_res)
+    
+    hyper_vols = [res.hyper_vol for res in results]
+    print "Hypervolume: " + str(hyper_vols) + ""
+    print "Spread: " + str([str(res.spread) for res in results])
+    
+    avg = sum(hyper_vols) / len(hyper_vols)
+    hmax = max(hyper_vols)
+    hmin = min(hyper_vols)
+    dev = max([hmax-avg,avg-hmin])
+    print "Hypervolume Deviation: " + str(avg) + "+-" + str(dev)
 
-ga = GA(num_candidates=100, fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10, prob_mut=0.05)
-hve1 = ga.run(num_generations=1000)
-print "Hyper volume: " + str(hve1.hyper_vol)
-print "Spread: " + str(hve1.spread)
+run_one_n_times()
+#ga = GA(num_candidates=100, fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10, prob_mut=0.05)
+#hve1 = ga.run(num_generations=1000)
+#print "Hyper volume: " + str(hve1.hyper_vol)
+#print "Spread: " + str(hve1.spread)
