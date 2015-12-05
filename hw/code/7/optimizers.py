@@ -181,15 +181,8 @@ class de(Optimizer):
     def compute(self):
         era_length = 100
         seed = self.model.get_decision()
-        mw_maxtries = 500
-        mw_maxchanges = 100
-        mw_p = 0.5
-        mw_threshold = 2
-        mw_steps = 10
-        era_collection = []
         cr = 0.3
-        f  = 0.5
-        de_npExpand = 10
+        f = 0.5
         kmax=1000
         np = era_length
         eras = 5

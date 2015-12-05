@@ -1,9 +1,7 @@
 import dtlz
 import random
 import math
-
-num_objs = 2
-num_decs = 10
+import hve
 
 def product(arr):
     mul = 1
@@ -27,13 +25,15 @@ def LCM_List(list):
     return lcm
 
 class candidate:
+    num_objs = 10
+
     def __init__(self, decs):
         self.decs = decs
         self.fitness = None
         self.dom_count = 0
 
     def calc_fitness(self, fitness_family):
-        self.fitness = fitness_family(self.decs, num_objs, len(self.decs))
+        self.fitness = fitness_family(self.decs, self.num_objs, len(self.decs))
         return
 
     def __gt__(self, other):
@@ -49,6 +49,7 @@ class population:
     num_candidates = 10;
     fitness_family = None
     prob_mut = 0.05
+    num_decs = 2
 
     def __init__(self, num_candidates = 10, fitness_family = dtlz.dtlz1):
         self.candidates = []
@@ -58,20 +59,20 @@ class population:
     def randomize(self):
         for i in range(self.num_candidates):
             can = candidate([])
-            for j in range(num_decs):
+            for j in range(self.num_decs):
                 can.decs.append(random.random())
             can.calc_fitness(self.fitness_family)
             self.candidates.append(can)
         self.ap_binary_dom()
 
     def crossover(self, candidate1, candidate2):
-        crossover_point = random.randrange(0, num_decs)
+        crossover_point = random.randrange(0, self.num_decs)
         decs1 = []
         decs2 = []
         for i in range(0, crossover_point):
             decs1.append(candidate1.decs[i])
             decs2.append(candidate2.decs[i])
-        for i in range(crossover_point, num_decs):
+        for i in range(crossover_point, self.num_decs):
             decs1.append(candidate2.decs[i])
             decs2.append(candidate1.decs[i])
         can1 = candidate(decs1)
@@ -84,7 +85,7 @@ class population:
         return self.weighted_wheel()
 
     def mutate(self, candidate):
-        for i in range(0, num_decs):
+        for i in range(0, self.num_decs):
             if random.random() < self.prob_mut:
                 candidate.decs[i] = random.random()
         return
@@ -105,8 +106,6 @@ class population:
 
     def weighted_wheel(self):
         # weighted wheel technique of selection
-        # print [sum(can.fitness) for can in self.candidates]
-        # print [x.dom_count for x in self.candidates]
         sumTemp = sum([x.dom_count for x in self.candidates])
         if sumTemp == 0:
             return self.candidates[random.randint(0, self.num_candidates-1)]
@@ -115,19 +114,20 @@ class population:
         for i in range(0, self.num_candidates):
             sumT += self.candidates[i].dom_count
             if rand < sumT:
-                # print "selected: " + str(sum(self.candidates[i].fitness))
-                # print self.candidates[i].dom_count
                 return self.candidates[i]
 
 class GA:
-    generations = []
     fitness_family = None
     num_candidates = 100
-    current_generation = 0
 
-    def __init__(self, num_candidates = 10, fitness_family = dtlz.dtlz1):
+    def __init__(self, num_candidates = 10, fitness_family = dtlz.dtlz1, num_objs =10, num_decs = 2, prob_mut=0.05):
+        self.generations = []
+        self.current_generation = 0
         self.num_candidates = num_candidates
         self.fitness_family = fitness_family
+        candidate.num_objs = num_objs
+        population.num_decs = num_decs
+        population.prob_mut = prob_mut
         return
 
     def randomize(self):
@@ -147,15 +147,6 @@ class GA:
             curr_pop.mutate(crs2)
             next_pop.candidates.append(crs1)
             next_pop.candidates.append(crs2)
-            # if crs1 < can1:
-            #     next_pop.candidates.append(crs1)
-            # else:
-            #     next_pop.candidates.append(can1)
-            # if crs2 < can2:
-            #     next_pop.candidates.append(crs2)
-            # else:
-            #     next_pop.candidates.append(can2)
-            #Not comparing parents with children right now
         next_pop.ap_binary_dom()
         self.generations.append(next_pop)
         self.current_generation += 1
@@ -172,11 +163,6 @@ class GA:
             if(sum(curr_pop.candidates[i].fitness) > worst_fitness):
                 worst_fitness = sum(curr_pop.candidates[i].fitness)
             sum_fitness += sum(curr_pop.candidates[i].fitness)
-        # print [sum(can.fitness) for can in curr_pop.candidates]
-        # print "-----------------------------------"
-        # print "Best fitness: " + str(best_fitness)
-        # print "Worst fitness: " + str(worst_fitness)
-        # print "Avg fitness: " + str(sum_fitness / self.num_candidates)
         strStats = ""
         strStats += str(best_fitness) + ","
         strStats += str(worst_fitness) + ","
@@ -184,9 +170,65 @@ class GA:
         print strStats
         return
 
-ga = GA(100, dtlz.dtlz1)
-ga.randomize()
-ga.statistics()
-for i in range(0, 100):
-    ga.next()
-    ga.statistics()
+    def skdata(self):
+		if self.current_generation % 100 != 99:
+			return
+		genStr = ""
+		genStr += "gen" + str((self.current_generation+1)/100) + " "
+		for pop in range(self.current_generation - 99, self.current_generation+1):
+			curr_pop = self.generations[pop]
+			for i in range(0, self.num_candidates):
+				genStr += str(curr_pop.candidates[i].fitness[0]) + " "
+		print genStr
+		return
+
+    def hvdata(self, hveCurr):
+        hveCurr.add_data(self.generations[self.current_generation])
+    
+    def initFile(self):
+        return
+    
+    def writeToFile(self):
+        return
+    
+    def run(self, num_generations=1000):
+        self.initFile()
+        self.randomize()
+        hveCurr = hve.HVE()
+        for i in range(0, num_generations):
+            self.next()
+            self.hvdata(hveCurr)
+            self.writeToFile()
+        hveCurr.pareto_last()
+        return hveCurr
+		
+objs = [2,4,6,8]
+decs = [10,20,40]
+fitness_family = [dtlz.dtlz1, dtlz.dtlz3, dtlz.dtlz5, dtlz.dtlz7]
+ff_names = ["dtlz1", "dtlz3", "dtlz5", "dtlz7"]
+
+def init():
+    for num_objs in objs:
+        for num_decs in decs:
+            for ff in ff_names:
+                for i in range(0, num_objs):
+                    f = open('data/{0}-{1}-{2}-f{3}.dat'.format(num_objs, num_decs, ff, i), 'w')
+                    f.close()
+                f = open('data/{0}-{1}-{2}-fsum.dat'.format(num_objs, num_decs, ff), 'w')
+                f.close()
+
+def run_all():
+    for num_objs in objs:
+        for num_decs in decs:
+            for ff in fitness_family:
+                ga = GA(num_candidates, ff, num_objs, num_decs)
+                ga.randomize()
+                #ga.statistics()
+                for i in range(0, num_generations):
+                    ga.next()
+                    ga.statistics()
+
+ga = GA(num_candidates=100, fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10, prob_mut=0.05)
+hve1 = ga.run(num_generations=1000)
+print "Hyper volume: " + str(hve1.hyper_vol)
+print "Spread: " + str(hve1.spread)
