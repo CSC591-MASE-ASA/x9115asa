@@ -220,35 +220,39 @@ def init():
 def run_all():
     for num_objs in objs:
         for num_decs in decs:
-            for ff in fitness_family:
-                ga = GA(num_candidates, ff, num_objs, num_decs)
-                ga.randomize()
-                #ga.statistics()
-                for i in range(0, num_generations):
-                    ga.next()
-                    ga.statistics()
+            for f in range(0, len(fitness_family)):
+                ff = fitness_family[f]
+                fname = ff_names[f]
+                sys.stderr.write("{0}-{1}-{2}\n".format(fname, num_objs, num_decs))
+                filedes = open("data/ga-{0}-{1}-{2}.txt".format(fname, num_objs, num_decs), 'w')
+                run_one_n_times(num_candidates=100, fitness_family=ff, num_objs=num_objs, num_decs=num_decs, num_generations=1000, filedes=filedes)
+                filedes.close()
                     
-def run_one_n_times():
+def run_one_n_times(num_candidates, fitness_family, num_objs, num_decs, num_generations, filedes):
     results = []
     num_runs = 20
     for i in range(0, num_runs):
         sys.stderr.write("Run " + str(i) + "\n")
-        ga = GA(num_candidates=100, fitness_family=dtlz.dtlz1, num_objs=8, num_decs=20)
-        hve_res = ga.run(num_generations=1000)
+        ga = GA(num_candidates, fitness_family, num_objs, num_decs)
+        hve_res = ga.run(num_generations)
         results.append(hve_res)
     
     hyper_vols = [res.hyper_vol for res in results]
-    print "Hypervolume: " + str(hyper_vols) + ""
-    print "Spread: " + str([str(res.spread) for res in results])
+#    print "Hypervolume: " + str(hyper_vols) + ""
+#    print "Spread: " + str([str(res.spread) for res in results])
+    filedes.write("Hypervolume: " + str(hyper_vols) + "\n")
+    filedes.write("Spread: " + str([str(res.spread) for res in results]) + "\n")
     
     avg = sum(hyper_vols) / len(hyper_vols)
     hmax = max(hyper_vols)
     hmin = min(hyper_vols)
     dev = max([hmax-avg,avg-hmin])
-    print "Hypervolume Deviation: " + str(avg) + "+-" + str(dev)
+#    print "Hypervolume Deviation: " + str(avg) + "+-" + str(dev)
+    filedes.write("Hypervolume Deviation: " + str(avg) + "+-" + str(dev) + "\n")
 
-run_one_n_times()
-#ga = GA(num_candidates=100, fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10, prob_mut=0.05)
+#run_one_n_times()
+#ga = GA(num_candidates=100, fitness_family=dtlz.dtlz1, num_objs=2, num_decs=20, prob_mut=0.05)
 #hve1 = ga.run(num_generations=1000)
 #print "Hyper volume: " + str(hve1.hyper_vol)
 #print "Spread: " + str(hve1.spread)
+run_all()
