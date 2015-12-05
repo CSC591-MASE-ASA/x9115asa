@@ -120,13 +120,14 @@ class GA:
     fitness_family = None
     num_candidates = 100
 
-    def __init__(self, num_candidates = 10, fitness_family = dtlz.dtlz1, num_objs =10, num_decs = 2):
+    def __init__(self, num_candidates = 10, fitness_family = dtlz.dtlz1, num_objs =10, num_decs = 2, prob_mut=0.05):
         self.generations = []
         self.current_generation = 0
         self.num_candidates = num_candidates
         self.fitness_family = fitness_family
         candidate.num_objs = num_objs
         population.num_decs = num_decs
+        population.prob_mut = prob_mut
         return
 
     def randomize(self):
@@ -227,7 +228,7 @@ def run_all():
                     ga.next()
                     ga.statistics()
 
-ga = GA(num_candidates=100, fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10)
+ga = GA(num_candidates=100, fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10, prob_mut=0.05)
 hve1 = ga.run(num_generations=1000)
 print "Hyper volume: " + str(hve1.hyper_vol)
 print "Spread: " + str(hve1.spread)
