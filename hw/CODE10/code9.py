@@ -2,28 +2,7 @@ import dtlz
 import random
 import math
 import hve
-
-def product(arr):
-    mul = 1
-    for i in range(0, len(arr)):
-        mul *= arr[i]
-    return mul
-
-def GCD(a,b):
-	a = abs(a)
-	b = abs(b)
-        while a:
-                a, b = b%a, a
-        return b
-
-def GCD_List(list):
-	return reduce(GCD, list)
-
-def LCM_List(list):
-    prod = product(list)
-    lcm = prod / GCD_List(list)
-    return lcm
-
+import cProfile
 class candidate:
     num_objs = 10
 
@@ -33,13 +12,16 @@ class candidate:
         self.dom_count = 0
 
     def calc_fitness(self, fitness_family):
-        self.fitness = fitness_family(self.decs, self.num_objs, len(self.decs))
+        self.fitness = fitness_family(self.decs, candidate.num_objs, len(self.decs))
         return
 
     def __gt__(self, other):
-        better = any([x < y for x,y in zip(self.fitness, other.fitness)])
-        worse = any([x > y for x,y in zip(self.fitness, other.fitness)])
-        return better and not worse
+        if self.fitness == other.fitness:
+            return False
+        for i in xrange(candidate.num_objs):
+            if other.fitness[i] < self.fitness[i]:
+                return False
+        return True
 
     def __repr__(self):
         return ",".join([str(x) for x in self.decs])
@@ -69,10 +51,10 @@ class population:
         crossover_point = random.randrange(0, self.num_decs)
         decs1 = []
         decs2 = []
-        for i in range(0, crossover_point):
+        for i in xrange(crossover_point):
             decs1.append(candidate1.decs[i])
             decs2.append(candidate2.decs[i])
-        for i in range(crossover_point, self.num_decs):
+        for i in xrange(crossover_point, self.num_decs):
             decs1.append(candidate2.decs[i])
             decs2.append(candidate1.decs[i])
         can1 = candidate(decs1)
@@ -81,14 +63,10 @@ class population:
         can2.calc_fitness(self.fitness_family)
         return [can1, can2]
 
-    def select(self):
-        return self.weighted_wheel()
-
     def mutate(self, candidate):
-        for i in range(0, self.num_decs):
+        for i in xrange(self.num_decs):
             if random.random() < self.prob_mut:
                 candidate.decs[i] = random.random()
-        return
 
     def __repr__(self):
         return ",".join([can.__repr__() for can in self.candidates])
@@ -96,9 +74,8 @@ class population:
     def ap_binary_dom(self):
         candidates = self.candidates
         n = self.num_candidates
-
-        for i in range(0, n):
-            for j in range(0, n):
+        for i in xrange(n):
+            for j in xrange(n):
                 if i == j:
                     continue
                 if candidates[i] > candidates[j]:
@@ -111,7 +88,7 @@ class population:
             return self.candidates[random.randint(0, self.num_candidates-1)]
         rand = random.random()*sumTemp
         sumT = 0
-        for i in range(0, self.num_candidates):
+        for i in xrange(self.num_candidates):
             sumT += self.candidates[i].dom_count
             if rand < sumT:
                 return self.candidates[i]
@@ -139,8 +116,8 @@ class GA:
         curr_pop = self.generations[self.current_generation];
         next_pop = population(self.num_candidates, self.fitness_family)
         for i in range(0, self.num_candidates, 2):
-            can1 = curr_pop.select()
-            can2 = curr_pop.select()
+            can1 = curr_pop.weighted_wheel()
+            can2 = curr_pop.weighted_wheel()
             [crs1, crs2] = curr_pop.crossover(can1, can2)
             curr_pop.mutate(crs1)
             curr_pop.mutate(crs2)
@@ -226,9 +203,11 @@ def init():
 #                for i in range(0, num_generations):
 #                    ga.next()
 #                    ga.statistics()
+def main():
+    ga = GA(fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10, prob_mut=0.05, num_candidates=100, num_generations=1000)
+    hve1 = ga.run()
+    print "Hyper volume: " + str(hve1.hyper_vol)
+    print "Spread: " + str(hve1.spread)
 
-#ga = GA(fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10, prob_mut=0.05,num_candidates=100, num_generations=1000)
-#hve1 = ga.run()
-#print "Hyper volume: " + str(hve1.hyper_vol)
-#print "Spread: " + str(hve1.spread)
-#
+if __name__ == "__main__":
+    cProfile.run('main()')

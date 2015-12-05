@@ -4,7 +4,7 @@ from models import Model
 import dtlz
 from code9 import *
 import random
-
+import cProfile
 
 class Tuner_Model(Model):
     def __init__(self, lower=[0.01, 50, 100], upper = [0.2, 150, 1000], algo_model=dtlz.dtlz1, algo_num_obj=1, algo_num_decs=1):
@@ -92,7 +92,16 @@ def main():
     decs = [10, 20, 40]
     lower = [0.01, 50, 500]
     upper = [0.3, 150, 1000]
-
+    #for model in models:
+    #    for num_objs in objs:
+    #        for num_decs in decs:
+    #            print model
+    #            print 'Obj: '+str(num_objs)
+    #            print 'Decs: '+str(num_decs)
+    #            tm = Tuner_Model(lower, upper, model, num_objs, num_decs)
+    #            cProfile.runctx('differential_evolution(tm)', {'differential_evolution':differential_evolution, 'tm':tm}, {})
+    tm = Tuner_Model(lower, upper, dtlz.dtlz1, 2, 10)
+    cProfile.runctx('differential_evolution(tm)', {'differential_evolution':differential_evolution, 'tm':tm}, {})
 
 if __name__ == "__main__":
     main()
