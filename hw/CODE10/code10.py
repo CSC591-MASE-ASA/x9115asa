@@ -87,10 +87,12 @@ def main():
     seed=[]
     #insert initial call to DE to tune GA here
     #define upper/lower limits for mutation rate, no candidates and no gens
+    models = [dtlz.dtlz1, dtlz.dtlz3, dtlz.dtlz5, dtlz.dtlz7]
+    objs = [2, 4, 6, 8]
+    decs = [10, 20, 40]
     lower = [0.01, 50, 500]
     upper = [0.3, 150, 1000]
-    tm = Tuner_Model(lower, upper, dtlz.dtlz1, 2, 10)
-    print differential_evolution(tm)
+
 
 if __name__ == "__main__":
     main()
