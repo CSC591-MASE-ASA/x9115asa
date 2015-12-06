@@ -3,6 +3,7 @@ import random
 import math
 import hve
 import sys
+import sk
 
 def product(arr):
     mul = 1
@@ -192,14 +193,32 @@ class GA:
     def writeToFile(self):
         return
     
+    def calc_a12(self):
+        if self.current_generation % 99 != 0 or self.current_generation < 199:
+            return 0
+        gen1 = []
+        gen2 = []
+        for i in range(self.current_generation-199, self.current_generation-99):
+            gen1 += self.generations[i].candidates
+        for i in range(self.current_generation-99, self.current_generation+1):
+            gen2 += self.generations[i].candidates
+        sum1 = [sum(c.fitness) for c in gen1]
+        sum2 = [sum(c.fitness) for c in gen2]
+        a12 = sk.a12(sum1, sum2)
+        return 1 if a12 > 0.56 else 0
+    
     def run(self, num_generations=1000):
         self.initFile()
         self.randomize()
         hveCurr = hve.HVE()
+        num_lives = 5
         for i in range(0, num_generations):
             self.next()
             self.hvdata(hveCurr)
             self.writeToFile()
+            num_lives -= self.calc_a12()
+            if num_lives == 0:
+                break
         return hveCurr.pareto_last()
 		
 objs = [2,4,6,8]
@@ -250,9 +269,17 @@ def run_one_n_times(num_candidates, fitness_family, num_objs, num_decs, num_gene
 #    print "Hypervolume Deviation: " + str(avg) + "+-" + str(dev)
     filedes.write("Hypervolume Deviation: " + str(avg) + "+-" + str(dev) + "\n")
 
-#run_one_n_times()
-#ga = GA(num_candidates=100, fitness_family=dtlz.dtlz1, num_objs=2, num_decs=20, prob_mut=0.05)
+### Scripts
+
+### Run one instance of GA 20 times. Results are collected in the file ga.txt
+#filedes = open("ga.txt", 'w')
+#run_one_n_times(num_candidates=25, fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10, num_generations=150, filedes=filedes)
+
+#### Run one instance of GA
+#ga = GA(num_candidates=100, fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10, prob_mut=0.05)
 #hve1 = ga.run(num_generations=1000)
 #print "Hyper volume: " + str(hve1.hyper_vol)
 #print "Spread: " + str(hve1.spread)
-run_all()
+
+### Run all instances of GA 20 times (warning: this takes hours)
+#run_all()
