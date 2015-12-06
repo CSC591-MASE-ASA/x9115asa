@@ -20,6 +20,8 @@ Furthermore, it provides an algorithmic means for exploiting such a connection
 #### Max-walkSat
 MaxWalkSat is a non-parametric stochastic method for sampling the landscape of the local region. Historically speaking, MaxWalkSat was a very impactful algorithm. But, at least here, the real purpose of discussing MaxWalkSat is to introduce the idea of landscapes. It will be argued that more important than the algorithms is the shape of the space they search. Since this shape can change, it is not possible to prove the adequacy of these meta-heuristics unless you first characterize the space they are trying to explore.
 
+### Scott-knott
+Scott-Knott (SK) is a hierarchical clustering algorithm used as an exploratory data analysis too. The SK procedure uses a clever algorithm of cluster analysis, where, starting from the whole group of observed mean effects, it divides, and keeps dividing the subgroups in such a way that the intersection of any of the two formed groups remains empty. In the words of A.J. Scott and M. Knott: "We study the consequences of using a well-known method of cluster analysis to partition the sample treatment means in a balanced design and show how a corresponding likelihood ratio test gives a method of judging the significance of the difference among groups obtained".[7]
 ### Implementation and results
 In this experiment, we evaluate three optimizers:
 1. Simulated annealing
@@ -209,3 +211,5 @@ The experiment shows that Differential Evolution performed better on an average.
 [5] Krall J., ,Menzies T. , Davies M.2015. Geometric Active Learning for Search-Based Software Engineering. IEEE Computer Society
 
 [6] Salam Sayyad, Tim Menzies, and Hany Ammar, On the Value of User Preferences in Search-Based Software Engineering: A Case Study in Software Product Lines, ICSE 2013.
+
+[7] Electronic Document Format(APA) Jelihovschi, E.G., Faria, J.C., & Allaman, I.B.. (2014). ScottKnott: a package for performing the Scott-Knott clustering algorithm in R. TEMA (São Carlos), 15(1), 3-17. https://dx.doi.org/10.5540/tema.2014.015.01.0003
