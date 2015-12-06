@@ -2,29 +2,7 @@ import dtlz
 import random
 import math
 import hve
-import sys
-
-def product(arr):
-    mul = 1
-    for i in range(0, len(arr)):
-        mul *= arr[i]
-    return mul
-
-def GCD(a,b):
-	a = abs(a)
-	b = abs(b)
-        while a:
-                a, b = b%a, a
-        return b
-
-def GCD_List(list):
-	return reduce(GCD, list)
-
-def LCM_List(list):
-    prod = product(list)
-    lcm = prod / GCD_List(list)
-    return lcm
-
+import cProfile
 class candidate:
     num_objs = 10
 
@@ -34,16 +12,19 @@ class candidate:
         self.dom_count = 0
 
     def calc_fitness(self, fitness_family):
-        self.fitness = fitness_family(self.decs, self.num_objs, len(self.decs))
+        self.fitness = fitness_family(self.decs, candidate.num_objs, len(self.decs))
         return
 
     def __gt__(self, other):
-        better = any([x < y for x,y in zip(self.fitness, other.fitness)])
-        worse = any([x > y for x,y in zip(self.fitness, other.fitness)])
-        return better and not worse
+        if self.fitness == other.fitness:
+            return False
+        for i in xrange(candidate.num_objs):
+            if other.fitness[i] < self.fitness[i]:
+                return False
+        return True
 
     def __repr__(self):
-        return ",".join([str(x) for x in self.decs])
+        return 'Candidate: ['+",".join([str(x) for x in self.decs])+']\n'
 
 
 class population:
@@ -56,6 +37,7 @@ class population:
         self.candidates = []
         self.num_candidates = num_candidates
         self.fitness_family = fitness_family
+        self.pop_paretho = []
 
     def randomize(self):
         for i in range(self.num_candidates):
@@ -70,10 +52,10 @@ class population:
         crossover_point = random.randrange(0, self.num_decs)
         decs1 = []
         decs2 = []
-        for i in range(0, crossover_point):
+        for i in xrange(crossover_point):
             decs1.append(candidate1.decs[i])
             decs2.append(candidate2.decs[i])
-        for i in range(crossover_point, self.num_decs):
+        for i in xrange(crossover_point, self.num_decs):
             decs1.append(candidate2.decs[i])
             decs2.append(candidate1.decs[i])
         can1 = candidate(decs1)
@@ -82,14 +64,10 @@ class population:
         can2.calc_fitness(self.fitness_family)
         return [can1, can2]
 
-    def select(self):
-        return self.weighted_wheel()
-
     def mutate(self, candidate):
-        for i in range(0, self.num_decs):
+        for i in xrange(self.num_decs):
             if random.random() < self.prob_mut:
                 candidate.decs[i] = random.random()
-        return
 
     def __repr__(self):
         return ",".join([can.__repr__() for can in self.candidates])
@@ -97,58 +75,72 @@ class population:
     def ap_binary_dom(self):
         candidates = self.candidates
         n = self.num_candidates
+        for candidate1 in candidates:
+            can_dominates_all = True
+            for candidate2 in candidates:
+                if candidate2 > candidate1:
+                    can_dominates_all = False
+                    break
+            if can_dominates_all:
+                self.pop_paretho.append(candidate1)
 
-        for i in range(0, n):
-            for j in range(0, n):
-                if i == j:
-                    continue
-                if candidates[i] > candidates[j]:
-                    candidates[i].dom_count += 1
-
-    def weighted_wheel(self):
-        # weighted wheel technique of selection
-        sumTemp = sum([x.dom_count for x in self.candidates])
-        if sumTemp == 0:
-            return self.candidates[random.randint(0, self.num_candidates-1)]
-        rand = random.random()*sumTemp
-        sumT = 0
-        for i in range(0, self.num_candidates):
-            sumT += self.candidates[i].dom_count
-            if rand < sumT:
-                return self.candidates[i]
+    #def weighted_wheel(self):
+    #    # weighted wheel technique of selection
+    #    sumTemp = sum([x.dom_count for x in self.candidates])
+    #    if sumTemp == 0:
+    #        return self.candidates[random.randint(0, self.num_candidates-1)]
+    #    rand = random.random()*sumTemp
+    #    sumT = 0
+    #    for i in xrange(self.num_candidates):
+    #        sumT += self.candidates[i].dom_count
+    #        if rand < sumT:
+    #            return self.candidates[i]
 
 class GA:
     fitness_family = None
     num_candidates = 100
-
-    def __init__(self, num_candidates = 10, fitness_family = dtlz.dtlz1, num_objs =10, num_decs = 2, prob_mut=0.05):
+    def __init__(self, fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10, prob_mut=0.05, num_candidates=100, num_generations=1000):
         self.generations = []
         self.current_generation = 0
-        self.num_candidates = num_candidates
+        self.num_candidates = int(num_candidates)
         self.fitness_family = fitness_family
+        self.num_generations = int(num_generations)
+        self.paretho_frontier = []
         candidate.num_objs = num_objs
         population.num_decs = num_decs
         population.prob_mut = prob_mut
-        return
 
     def randomize(self):
         gen1 = population(self.num_candidates, self.fitness_family)
         gen1.randomize()
         self.generations.append(gen1)
+        self.paretho_frontier.extend(gen1.pop_paretho)
         return
-
+    def update_paretho(self, new_paretho):
+        add_new = []
+        for old in self.paretho_frontier:
+            for new in new_paretho:
+                if new > old:
+                    self.paretho_frontier.remove(old)
+                    add_new.append(new)
+                    break
+        self.paretho_frontier.extend(add_new)
     def next(self):
         curr_pop = self.generations[self.current_generation];
         next_pop = population(self.num_candidates, self.fitness_family)
         for i in range(0, self.num_candidates, 2):
-            can1 = curr_pop.select()
-            can2 = curr_pop.select()
+            paretho_idx = random.sample(xrange(len(self.paretho_frontier)), 2)
+            can1 = self.paretho_frontier[paretho_idx[0]]
+            can2 = self.paretho_frontier[paretho_idx[1]]
+            #pick from frontier
+
             [crs1, crs2] = curr_pop.crossover(can1, can2)
             curr_pop.mutate(crs1)
             curr_pop.mutate(crs2)
             next_pop.candidates.append(crs1)
             next_pop.candidates.append(crs2)
         next_pop.ap_binary_dom()
+        self.update_paretho(next_pop.pop_paretho)
         self.generations.append(next_pop)
         self.current_generation += 1
         return
@@ -172,16 +164,16 @@ class GA:
         return
 
     def skdata(self):
-		if self.current_generation % 100 != 99:
-			return
-		genStr = ""
-		genStr += "gen" + str((self.current_generation+1)/100) + " "
-		for pop in range(self.current_generation - 99, self.current_generation+1):
-			curr_pop = self.generations[pop]
-			for i in range(0, self.num_candidates):
-				genStr += str(curr_pop.candidates[i].fitness[0]) + " "
-		print genStr
-		return
+        if self.current_generation % 100 != 99:
+            return
+        genStr = ""
+        genStr += "gen" + str((self.current_generation+1)/100) + " "
+        for pop in range(self.current_generation - 99, self.current_generation+1):
+            curr_pop = self.generations[pop]
+            for i in range(0, self.num_candidates):
+                genStr += str(curr_pop.candidates[i].fitness[0]) + " "
+        print genStr
+        return
 
     def hvdata(self, hveCurr):
         hveCurr.add_data(self.generations[self.current_generation])
@@ -192,15 +184,16 @@ class GA:
     def writeToFile(self):
         return
     
-    def run(self, num_generations=1000):
-        self.initFile()
+    def run(self):
+        #self.initFile()
         self.randomize()
         hveCurr = hve.HVE()
-        for i in range(0, num_generations):
+        for i in range(0, self.num_generations):
             self.next()
             self.hvdata(hveCurr)
-            self.writeToFile()
-        return hveCurr.pareto_last()
+            #self.writeToFile()
+        hveCurr.pareto_last(self.paretho_frontier)
+        return hveCurr
 		
 objs = [2,4,6,8]
 decs = [10,20,40]
@@ -217,42 +210,21 @@ def init():
                 f = open('data/{0}-{1}-{2}-fsum.dat'.format(num_objs, num_decs, ff), 'w')
                 f.close()
 
-def run_all():
-    for num_objs in objs:
-        for num_decs in decs:
-            for f in range(0, len(fitness_family)):
-                ff = fitness_family[f]
-                fname = ff_names[f]
-                sys.stderr.write("{0}-{1}-{2}\n".format(fname, num_objs, num_decs))
-                filedes = open("data/ga-{0}-{1}-{2}.txt".format(fname, num_objs, num_decs), 'w')
-                run_one_n_times(num_candidates=100, fitness_family=ff, num_objs=num_objs, num_decs=num_decs, num_generations=1000, filedes=filedes)
-                filedes.close()
-                    
-def run_one_n_times(num_candidates, fitness_family, num_objs, num_decs, num_generations, filedes):
-    results = []
-    num_runs = 20
-    for i in range(0, num_runs):
-        sys.stderr.write("Run " + str(i) + "\n")
-        ga = GA(num_candidates, fitness_family, num_objs, num_decs)
-        hve_res = ga.run(num_generations)
-        results.append(hve_res)
-    
-    hyper_vols = [res.hyper_vol for res in results]
-#    print "Hypervolume: " + str(hyper_vols) + ""
-#    print "Spread: " + str([str(res.spread) for res in results])
-    filedes.write("Hypervolume: " + str(hyper_vols) + "\n")
-    filedes.write("Spread: " + str([str(res.spread) for res in results]) + "\n")
-    
-    avg = sum(hyper_vols) / len(hyper_vols)
-    hmax = max(hyper_vols)
-    hmin = min(hyper_vols)
-    dev = max([hmax-avg,avg-hmin])
-#    print "Hypervolume Deviation: " + str(avg) + "+-" + str(dev)
-    filedes.write("Hypervolume Deviation: " + str(avg) + "+-" + str(dev) + "\n")
+#def run_all():
+#    for num_objs in objs:
+#        for num_decs in decs:
+#            for ff in fitness_family:
+#                ga = GA(num_candidates, ff, num_objs, num_decs)
+#                ga.randomize()
+#                #ga.statistics()
+#                for i in range(0, num_generations):
+#                    ga.next()
+#                    ga.statistics()
+def main():
+    ga = GA(fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10, prob_mut=0.05, num_candidates=100, num_generations=600)
+    hve1 = ga.run()
+    print "Hyper volume: " + str(hve1.hyper_vol)
+    print "Spread: " + str(hve1.spread)
 
-#run_one_n_times()
-#ga = GA(num_candidates=100, fitness_family=dtlz.dtlz1, num_objs=2, num_decs=20, prob_mut=0.05)
-#hve1 = ga.run(num_generations=1000)
-#print "Hyper volume: " + str(hve1.hyper_vol)
-#print "Spread: " + str(hve1.spread)
-run_all()
+if __name__ == "__main__":
+    cProfile.run('main()')

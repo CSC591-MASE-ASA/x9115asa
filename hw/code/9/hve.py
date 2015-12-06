@@ -1,10 +1,13 @@
 import random
 
+class Result:
+    def __init__(self, hyper_vol, spread):
+        self.hyper_vol = hyper_vol
+        self.spread = spread
+
 class HVE:
     def __init__(self):
         self.generations = []
-        self.hyper_vol = 0
-        self.spread = []
 
     def add_data(self, generation):
         self.generations.append(generation)
@@ -30,17 +33,8 @@ class HVE:
             else:
                 fron_cans.append(ran_can)
         
-        # Trying to clean up pareto and calculating spread
-        spread_max = fron_cans[0].fitness[:]
-        spread_min = fron_cans[0].fitness[:]
+        # Trying to clean up pareto
         for i in range(0, len(fron_cans)):
-            #Getting min,max values for every objective
-            for k in range(0, len(fron_cans[i].fitness)):
-                if spread_min[k] > fron_cans[i].fitness[k]:
-                    spread_min[k] = fron_cans[i].fitness[k]
-                if spread_max[k] < fron_cans[i].fitness[k]:
-                    spread_max[k] = fron_cans[i].fitness[k]
-            
             # Seeing if any candidate in the frontier is bin dom by every other in the frontier, if yes then can remove it
             flag = True
             for j in range(0, len(fron_cans)):
@@ -57,6 +51,15 @@ class HVE:
             if flag:
                 del fron_cans[j]
         
-        self.hyper_vol = (num_cans-len(fron_cans))/float(num_cans)
-        self.spread = [x-y for x,y in zip(spread_max, spread_min)]
+        # Calculating spread
+        spread = []
+        for i in range(0, len(fron_cans[0].fitness)):
+            fsorted = sorted(fron_cans, lambda x,y: x.fitness[i] < y.fitness[i])
+            p25 = fsorted[len(fsorted)/4]
+            p75 = fsorted[3*len(fsorted)/4]
+            spread.append(abs(p75.fitness[i]-p25.fitness[i]))
+        
+        hyper_vol = (num_cans-len(fron_cans))/float(num_cans)
+        res = Result(hyper_vol, spread)
+        return res
                     

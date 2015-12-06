@@ -17,7 +17,7 @@ class Model:
         while True:
             decs =  [random.randrange(self.lower_bounds[dec_number], self.upper_bounds[dec_number])
                      if isinstance(self.lower_bounds[dec_number], int)
-                     else random.uniform(self.lower_bounds[dec_number], self.uniform[dec_number])
+                     else random.uniform(self.lower_bounds[dec_number], self.upper_bounds[dec_number])
                      for dec_number in xrange(self.no_of_decisions)]
             if self.eval(decs):
                 return decs
