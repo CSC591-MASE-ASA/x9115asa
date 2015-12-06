@@ -62,6 +62,8 @@ The spread of the frontier is a vector of objectives, the values of which are th
 
 2. To calculate hyper volume, using a random selection with *n* number of picks instead of doing *n<sup>2</sup>* all pairs comparisons for finding the pareto frontier. This method of building the pareto frontier proved to be robust with 80-95% of picks being good.
 
+3. Spread is calculated as the difference between 75th and 25th percentile for every objective values for candidates in the frontier. This prevents outliers from influencing the spread.
+
 ##### Hyper volume ratios
 
 **dtlz1**
@@ -100,6 +102,17 @@ The spread of the frontier is a vector of objectives, the values of which are th
 |6|0.955885+-0.163865|0.9508245+-0.1626845|0.8912205+-0.2534205|
 |8|
 
-#### Discussion
+### Discussion
 
-#### Conclusion
+
+#### Threats to validity
+The basis of the generations getting better is the selection mechanism used to choose fit candidates from a generation. The implemented selection mechanism chooses candidates by a weighted wheel given a share of the wheel proportional to the number of other candidates it dominates in the generation. It is possible that, since the overall generation gets better together and not individual candidates, that candidates don't really dominate any (or few) candidates in their respective generations. After a while, the selection will transform into uniform random in a generation and will start producing non-optimal candidates. This implementation has not found any evidence of this scenario because spread values conform between runs.
+
+#### Future Work
+Binary domination is known to be questionable when dealing with number of objectives more than 2. Continuous domination could be used as method for comparing candidates based on their multi objective fitness. Binary domination, given it's binary decision decision making, will produce coarse grained outcomes with many candidates not being included in the pareto frontier. Continuous domination could finer outcomes allowing more candidates to be part of the pareto front will still maintaining low spread.
+
+An additional technique for selection could be to contruct the pareto frontier for every generation and picking candidates from it for consideration for the next generation. This technique could produce a more focused (less spread) pareto frontier expecially when paired with continuous domination.
+
+### Conclusion
+
+### References
