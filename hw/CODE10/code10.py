@@ -4,7 +4,7 @@ from models import Model
 import dtlz
 from code9 import *
 import random
-import cProfile
+
 
 class Tuner_Model(Model):
     def __init__(self, lower=[0.01, 50, 100], upper = [0.2, 150, 1000], algo_model=dtlz.dtlz1, algo_num_obj=1, algo_num_decs=1):
@@ -22,14 +22,11 @@ class Tuner_Model(Model):
         hve1 = ga.run()
         return hve1.hyper_vol
 
-
-
-
 def differential_evolution(model = Tuner_Model()):
         cr = 0.3
         f = 0.5
-        kmax=5
-        np = 10
+        kmax=2
+        np = 15
         seed = model.get_decision()
         def mutate(these):
             sn=[]
@@ -66,8 +63,10 @@ def differential_evolution(model = Tuner_Model()):
         frontier = create_frontier(seed)
         sb = seed
         eb = model.energy(seed)
+        print eb
         print 'Best energy so far: '+str(eb)
         print 'Best solution so far: '+str(sb)
+        no_change=0
         for k in xrange(kmax):
             for i,candidate in enumerate(frontier):
                 e = model.energy(candidate)
@@ -77,7 +76,10 @@ def differential_evolution(model = Tuner_Model()):
                 if en > e:
                     frontier[i] = sn
                 if en > eb:
+                    no_change=0
                     sb, eb = sn, en
+                if eb > 0.999 and no_change > 10:
+                    return sb
                 print 'Best energy so far: '+str(eb)
                 print 'Best solution so far: '+str(sb)
         return sb
@@ -91,17 +93,26 @@ def main():
     objs = [2, 4, 6, 8]
     decs = [10, 20, 40]
     lower = [0.01, 50, 500]
-    upper = [0.3, 150, 1000]
-    #for model in models:
-    #    for num_objs in objs:
-    #        for num_decs in decs:
-    #            print model
-    #            print 'Obj: '+str(num_objs)
-    #            print 'Decs: '+str(num_decs)
-    #            tm = Tuner_Model(lower, upper, model, num_objs, num_decs)
-    #            cProfile.runctx('differential_evolution(tm)', {'differential_evolution':differential_evolution, 'tm':tm}, {})
-    tm = Tuner_Model(lower, upper, dtlz.dtlz1, 2, 10)
-    cProfile.runctx('differential_evolution(tm)', {'differential_evolution':differential_evolution, 'tm':tm}, {})
-
+    upper = [0.5, 100, 1000]
+    rdiv_ip=[]
+    for model in models:
+        for num_objs in objs:
+            for num_decs in decs:
+                run_name = model.__name__+'_o'+str(num_objs)+'_d'+str(num_decs)
+                print run_name
+                tm = Tuner_Model(lower, upper, model, num_objs, num_decs)
+                ga_params = differential_evolution(tm)
+                tune = [run_name+'_t']
+                untune = [run_name+'_u']
+                for i in xrange(20):
+                    ga_t = GA(model, num_objs, num_decs, *ga_params)
+                    res_t = ga_t.run()
+                    tune.append(res_t.hyper_vol)
+                    ga_u = GA(model, num_objs, num_decs, prob_mut=0.05, num_candidates=100, num_generations=1000)
+                    res_u = ga_u.run()
+                    untune.append(res_u.hyper_vol)
+                rdiv_ip.append(tune)
+                rdiv_ip.append(untune)
+                print rdiv_ip
 if __name__ == "__main__":
     main()

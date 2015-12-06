@@ -37,7 +37,7 @@ class population:
         self.candidates = []
         self.num_candidates = num_candidates
         self.fitness_family = fitness_family
-        self.pop_paretho = []
+        self.pop_pareto = []
 
     def randomize(self):
         for i in range(self.num_candidates):
@@ -82,7 +82,7 @@ class population:
                     can_dominates_all = False
                     break
             if can_dominates_all:
-                self.pop_paretho.append(candidate1)
+                self.pop_pareto.append(candidate1)
 
     #def weighted_wheel(self):
     #    # weighted wheel technique of selection
@@ -105,7 +105,7 @@ class GA:
         self.num_candidates = int(num_candidates)
         self.fitness_family = fitness_family
         self.num_generations = int(num_generations)
-        self.paretho_frontier = []
+        self.pareto_frontier = []
         candidate.num_objs = num_objs
         population.num_decs = num_decs
         population.prob_mut = prob_mut
@@ -114,24 +114,28 @@ class GA:
         gen1 = population(self.num_candidates, self.fitness_family)
         gen1.randomize()
         self.generations.append(gen1)
-        self.paretho_frontier.extend(gen1.pop_paretho)
+        self.pareto_frontier.extend(gen1.pop_pareto)
         return
-    def update_paretho(self, new_paretho):
+    def update_pareto(self, new_pareto):
         add_new = []
-        for old in self.paretho_frontier:
-            for new in new_paretho:
+        for new in new_pareto:
+            for old in self.pareto_frontier:
                 if new > old:
-                    self.paretho_frontier.remove(old)
+                    self.pareto_frontier.remove(old)
+                if not old > new and not old==new:
                     add_new.append(new)
                     break
-        self.paretho_frontier.extend(add_new)
+        self.pareto_frontier.extend(add_new)
     def next(self):
         curr_pop = self.generations[self.current_generation];
         next_pop = population(self.num_candidates, self.fitness_family)
         for i in range(0, self.num_candidates, 2):
-            paretho_idx = random.sample(xrange(len(self.paretho_frontier)), 2)
-            can1 = self.paretho_frontier[paretho_idx[0]]
-            can2 = self.paretho_frontier[paretho_idx[1]]
+            #print(self.pareto_frontier)
+            pareto_idx=[0,0]
+            if len(self.pareto_frontier) >= 2:
+                pareto_idx = random.sample(xrange(len(self.pareto_frontier)), 2)
+            can1 = self.pareto_frontier[pareto_idx[0]]
+            can2 = self.pareto_frontier[pareto_idx[1]]
             #pick from frontier
 
             [crs1, crs2] = curr_pop.crossover(can1, can2)
@@ -140,7 +144,7 @@ class GA:
             next_pop.candidates.append(crs1)
             next_pop.candidates.append(crs2)
         next_pop.ap_binary_dom()
-        self.update_paretho(next_pop.pop_paretho)
+        self.update_pareto(next_pop.pop_pareto)
         self.generations.append(next_pop)
         self.current_generation += 1
         return
@@ -178,21 +182,17 @@ class GA:
     def hvdata(self, hveCurr):
         hveCurr.add_data(self.generations[self.current_generation])
     
-    def initFile(self):
-        return
-    
-    def writeToFile(self):
-        return
-    
     def run(self):
-        self.initFile()
+        #self.initFile()
         self.randomize()
-        hveCurr = hve.HVE()
+        #print 'Completed randomize'
+        hveCurr = hve.HVE(self.num_candidates, self.num_generations)
         for i in range(0, self.num_generations):
             self.next()
+            #print self.pareto_frontier
             self.hvdata(hveCurr)
-            self.writeToFile()
-        hveCurr.pareto_last(self.paretho_frontier)
+            #self.writeToFile()
+        hveCurr.pareto_last(self.pareto_frontier)
         return hveCurr
 		
 objs = [2,4,6,8]
@@ -221,7 +221,7 @@ def init():
 #                    ga.next()
 #                    ga.statistics()
 def main():
-    ga = GA(fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10, prob_mut=0.05, num_candidates=100, num_generations=1000)
+    ga = GA(fitness_family=dtlz.dtlz7, num_objs=2, num_decs=40, prob_mut=0.05, num_candidates=100, num_generations=1000)
     hve1 = ga.run()
     print "Hyper volume: " + str(hve1.hyper_vol)
     print "Spread: " + str(hve1.spread)
