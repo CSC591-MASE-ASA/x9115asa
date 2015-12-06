@@ -1,4 +1,4 @@
-## Implmenting Reuse and High Level Languages Model
+## Code 8
 
 ### Abstract
 In order to derive the optimal solution, one can use different optimizers to solve the optimization problem. However how does one choose one optimizer over another given that each optimizer has its own pros and cons. This report presents a comparison between the performance of three optimizers i.e. Differential Evolution, Simulated annealing and Max-Walk Sat. We use the statistical machinery like t-Knott, a12, bootstrap to decide which of DE, MWS, SA is best for the model. The model chosen for this experiment is the DTLZ7 model.
