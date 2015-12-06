@@ -185,13 +185,13 @@ class GA:
         return
     
     def run(self):
-        self.initFile()
+        #self.initFile()
         self.randomize()
         hveCurr = hve.HVE()
         for i in range(0, self.num_generations):
             self.next()
             self.hvdata(hveCurr)
-            self.writeToFile()
+            #self.writeToFile()
         hveCurr.pareto_last(self.paretho_frontier)
         return hveCurr
 		
@@ -221,7 +221,7 @@ def init():
 #                    ga.next()
 #                    ga.statistics()
 def main():
-    ga = GA(fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10, prob_mut=0.05, num_candidates=100, num_generations=1000)
+    ga = GA(fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10, prob_mut=0.05, num_candidates=100, num_generations=600)
     hve1 = ga.run()
     print "Hyper volume: " + str(hve1.hyper_vol)
     print "Spread: " + str(hve1.spread)
