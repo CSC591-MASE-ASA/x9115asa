@@ -131,7 +131,9 @@ class GA:
         next_pop = population(self.num_candidates, self.fitness_family)
         for i in range(0, self.num_candidates, 2):
             #print(self.pareto_frontier)
-            pareto_idx = random.sample(xrange(len(self.pareto_frontier)), 2)
+            pareto_idx=[0,0]
+            if len(self.pareto_frontier) >= 2:
+                pareto_idx = random.sample(xrange(len(self.pareto_frontier)), 2)
             can1 = self.pareto_frontier[pareto_idx[0]]
             can2 = self.pareto_frontier[pareto_idx[1]]
             #pick from frontier
