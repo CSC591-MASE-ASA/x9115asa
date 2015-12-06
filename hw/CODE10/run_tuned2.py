@@ -7,7 +7,7 @@ if __name__ == '__main__':
     models = [dtlz.dtlz3]
     objs = [2, 4, 6, 8]
     decs = [10, 20, 40]
-    lower = [0.01, 10, 100]
+    lower = [0.01, 50, 500]
     upper = [0.5, 100, 1000]
     for model in models:
         for num_objs in objs:
