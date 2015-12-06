@@ -92,8 +92,8 @@ def main():
     models = [dtlz.dtlz1, dtlz.dtlz3, dtlz.dtlz5, dtlz.dtlz7]
     objs = [2, 4, 6, 8]
     decs = [10, 20, 40]
-    lower = [0.01, 20, 100]
-    upper = [0.5, 30, 200]
+    lower = [0.01, 50, 500]
+    upper = [0.5, 100, 1000]
     rdiv_ip=[]
     for model in models:
         for num_objs in objs:
