@@ -103,6 +103,10 @@ The spread of the frontier is a vector of objectives, the values of which are th
 |8|
 
 ### Discussion
+GA, being an evolutionary algorithm, tries to solve the problem of finding an optimum solution without knowing what direction it might be in or even have a base point to start of with. To do this, it relies on great deal of randomness and using previously generated values to approach the optimum. Given these constraints GA seems to perform well and with much less complexity than standard all pairs or mathematical resolution of the problem space. The validity of GA as an evolutionary algorithm can be verified with parameters such as hypervolume and spread, both of which are easy to calculate given the generations of a GA run.
+
+This implementation paired with DTLZ family of fitness functions allows GA to venture into the realm of multi objective optimization. The results produced by this paper show that GA can be applied effectively to multi objective optimization although the confidence with higher number of objectives is not great. Tweaks to the current implementation like using continuous implementation may help fine tune GA for higher number of objectives.
+
 
 
 #### Threats to validity
@@ -114,5 +118,6 @@ Binary domination is known to be questionable when dealing with number of object
 An additional technique for selection could be to contruct the pareto frontier for every generation and picking candidates from it for consideration for the next generation. This technique could produce a more focused (less spread) pareto frontier expecially when paired with continuous domination.
 
 ### Conclusion
+Genetic Algorithm is a promising algorithm in the class of Evolutionary Algorithms
 
 ### References
