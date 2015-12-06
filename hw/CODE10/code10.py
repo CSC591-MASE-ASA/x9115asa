@@ -26,7 +26,7 @@ def differential_evolution(model = Tuner_Model()):
         cr = 0.3
         f = 0.5
         kmax=2
-        np = 20
+        np = 15
         seed = model.get_decision()
         def mutate(these):
             sn=[]
