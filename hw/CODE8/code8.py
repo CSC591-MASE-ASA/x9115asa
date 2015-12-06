@@ -24,7 +24,7 @@ xup = [1,1,1,1,1,1,1,1,1,1]
 PI = math.pi
 eras = 5
 era_length = 50
-mw_maxtries = 500
+mw_maxtries = 800
 mw_maxchanges = 100
 mw_p = 0.5
 mw_threshold = 2
@@ -113,13 +113,6 @@ def cal_median_for_era(era):
     return median(res)
 
 def type2(era1,era2):
-    # a12_o1 = different(calc_obj1(era1),calc_obj1(era2))
-    # a12_o2 = different(calc_obj2(era1),calc_obj2(era2))
-    # if a12_o1 or a12_o2:
-    #     return 5
-    # else:
-    #     # print a12_o1,a12_o2
-    #     return -1
     a12_o1 = a12(calc_obj1(era1),calc_obj1(era2))
     a12_o2 = a12(calc_obj2(era1),calc_obj2(era2))
     if a12_o1 >=0.56 or a12_o2>0.56:
@@ -139,34 +132,78 @@ def type3():
     de_cr = 0.4
     de_f  = 0.5
     kmax = 6000
-    for i in xrange(5):
+    de_eras = ["DE"]
+    mws_eras = ["MWS"]
+    sa_eras = ["SA"]
+    et_counter = {'SA':0,'MWS':0,'DE':0}
+    for i in xrange(20):
         seed = randomassign()
-        mw_sol, mw_era = max_walk_sat(mw_maxtries,mw_maxchanges,999,mw_p,mw_steps,seed,eras,era_length)
+        mw_ea,mw_sol, mw_era = max_walk_sat(mw_maxtries,mw_maxchanges,999,mw_p,mw_steps,seed,eras,era_length)
         label = "MWS"+str(i+1)
         # +"best: "+str(round(dtlz7(mw_sol),2))
         res = [dtlz7(x) for x in mw_era]
         res.insert(0,label)
         era_collection.append(res)
+        if mw_ea == True:
+            et_counter['MWS']+=1
         mw_era= []
 
-        sa_sol, sa_era = simmulated_annealing(kmax,seed,eras,era_length,)
+        s_ea,sa_sol, sa_era = simmulated_annealing(kmax,seed,eras,era_length,)
         label = "SA"+str(i+1)
         # +"best: "+str(round(dtlz7(sa_sol),2))
         res = [dtlz7(x) for x in sa_era]
         res.insert(0,label)
         era_collection.append(res)
+        if s_ea == True:
+            et_counter['SA']+=1
         sa_era = []
 
-        de_sol, de_era = differential_evolution( de_cr, de_f,kmax,seed,eras,era_length)
+        de_ea,de_sol, de_era = differential_evolution( de_cr, de_f,12000,seed,eras,era_length)
         label = "DE"+str(i+1)
         # +str(round(dtlz7(de_sol),2))
         res = [dtlz7(x) for x in de_era]
         res.insert(0,label)
         era_collection.append(res)
+        if de_ea == True:
+            et_counter['DE']+=1
         de_era=[]
+    #     mw_ea,mw_sol, mw_era = max_walk_sat(mw_maxtries,mw_maxchanges,999,mw_p,mw_steps,seed,eras,era_length)
+    #     # label = "MWS"+str(i+1)
+    #     # +"best: "+str(round(dtlz7(mw_sol),2))
+    #     res = [dtlz7(x) for x in mw_era]
+    #     # res.insert(0,label)
+    #     mws_eras.extend(res)
+    #     if mw_ea == True:
+    #         et_counter['MWS']+=1
+    #     mw_era= []
+    #
+    #     s_ea,sa_sol, sa_era = simmulated_annealing(kmax,seed,eras,era_length,)
+    #     # label = "SA"+str(i+1)
+    #     # +"best: "+str(round(dtlz7(sa_sol),2))
+    #     res = [dtlz7(x) for x in sa_era]
+    #     # res.insert(0,label)
+    #     sa_eras.extend(res)
+    #     if s_ea == True:
+    #         et_counter['SA']+=1
+    #     sa_era = []
+    #
+    #     de_ea,de_sol, de_era = differential_evolution( de_cr, de_f,kmax,seed,eras,era_length)
+    #     # label = "DE"+str(i+1)
+    #     # +str(round(dtlz7(de_sol),2))
+    #     res = [dtlz7(x) for x in de_era]
+    #     # res.insert(0,label)
+    #     de_eras.extend(res)
+    #     if de_ea == True:
+    #         et_counter['DE']+=1
+    #     de_era=[]
+    #
+    # era_collection.append(mws_eras)
+    # era_collection.append(sa_eras)
+    # era_collection.append(de_eras)
 
-    print rdivDemo(era_collection)
-
+    rdivDemo(era_collection)
+    for key,val in et_counter.items():
+        print key,val
 
 def randomassign():
     x=[]
@@ -205,6 +242,7 @@ def max_walk_sat(maxtries,maxchanges,threshold,p,steps,seed,eras,era_length):
     print_sol_sb = []
     print_sol = []
     op = ""
+    early_termination = False
     all_eras = []
     all_best = []
     for i in xrange(0,maxtries):
@@ -240,9 +278,10 @@ def max_walk_sat(maxtries,maxchanges,threshold,p,steps,seed,eras,era_length):
             prev_era = this_era[:]
             this_era = []
             if eras < 1:
+                early_termination = True
                 break
 
-    return sb,prev_era
+    return early_termination, sb,prev_era
 
 
 def simmulated_annealing(kmax,seed,eras,era_length,):
@@ -278,6 +317,7 @@ def simmulated_annealing(kmax,seed,eras,era_length,):
     all_eras =[]
     all_best = []
     op = ""
+    early_termination = False
     while True:
         k +=1
         sn = neighbor(s)
@@ -309,17 +349,21 @@ def simmulated_annealing(kmax,seed,eras,era_length,):
             if k > kmax or eras < 1:
                 print k,kmax,eras<1
                 print "sa eras",eras
+                if eras < 1:
+                    early_termination = True
                 break
 
     for i in xrange(len(all_eras)):
         op = op + str(i+1)+","+str(all_eras[i])+","+str(all_best[i])+"\n"
 
     print op
-    return sb, prev_era
+    return early_termination, sb, prev_era
 
 def differential_evolution(cr, f, k_max,seed,eras,era_length):
     np = era_length
     k = 0
+    eras = 10
+    early_termination = False
     def xPlusFyz(x,y,z):
         sn=[]
         def smear((x1, y1, z1)):
@@ -368,42 +412,96 @@ def differential_evolution(cr, f, k_max,seed,eras,era_length):
 
     prev_era = []
     this_era = []
+    hypervol = []
     while True:
         for i,candidate in enumerate(frontier):
             x, y, z = generate_items(frontier,i)
             sn = xPlusFyz(x,y,z)
             en = dtlz7(sn)
+
             if type1(sb,sn) == sn:
                 sb = sn[:]
                 eb = en
+
             if type1(candidate,sn) == sn:
                 frontier[i] = sn
+
             k = k + 1
         this_era = frontier[:]
         if len(prev_era) > 0:
             eras = eras + type2(prev_era,this_era)
         prev_era = this_era[:]
-        this_era = []
+        all_eras.extend(prev_era)
         print "de eras",eras
 
         if k> k_max or eras < 1:
             print "k",k
             print "eras",eras
+            if eras < 1:
+                early_termination = True
             break
 
-    return sb, prev_era
+    # for sol in all_eras:
+    # for sol in prev_era:
+    #     res = []
+    #     res=[f_one(sol),f_two(sol)]
+    #     hypervol.append(res)
+    # print hypervol
+    # print "HYPERVOLLLLL"
+    # referencePoint = [0,0]
+    # hv1 = hv.InnerHyperVolume(referencePoint)
+    # volume = hv1.compute(hypervol)
+    # print volume
+    return early_termination, sb, prev_era
+    # while True:
+    #     for i,candidate in enumerate(frontier):
+    #         x, y, z = generate_items(frontier,i)
+    #         sn = x
+    #         en = dtlz7(sn)
+    #         if cr <= random():
+    #             if type1(candidate,sn) == sn:
+    #                 frontier[i] = sn[:]
+    #                 candidate = sn[:]
+    #                 en = dtlz7(sn)
+    #         else:
+    #             sn = xPlusFyz(x,y,z)
+    #             en = dtlz7(sn)
+    #             if type1(sn,candidate) == sn:
+    #                 frontier[i] = sn[:]
+    #
+    #         if type1(sb,sn) == sn:
+    #             sb = sn[:]
+    #             eb = en
+    #
+    #         # sn = xPlusFyz(x,y,z)
+    #         #
+    #         # en = dtlz7(sn)
+    #         #
+    #         # if type1(sb,sn) == sn:
+    #         #     sb = sn[:]
+    #         #     eb = en
+    #         #
+    #         # if type1(candidate,sn) == sn:
+    #         #     frontier[i] = sn[:]
+    #
+    #         k = k + 1
+    #     this_era = frontier[:]
+    #     if len(prev_era) > 0:
+    #         eras = eras + type2(prev_era,this_era)
+    #     prev_era = this_era[:]
+    #     this_era = []
+    #     print "de eras",eras
+    #
+    #     if k> k_max or eras < 1:
+    #         print "k",k
+    #         print "eras",eras
+    #         break
+    #
+    # return sb, prev_era
 
 
 def test():
-    x = randomassign()
-    maxchanges=25
-    p=0.5
-    era_length = 25
-    eras = 5
-    maxtries=10000
-    kmax =10000
-    cr = de_cr
-    f = de_f
     type3()
+    # print f_one(xlower), f_two(xlower)
 
 test()
