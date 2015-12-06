@@ -20,7 +20,7 @@ if __name__ == '__main__':
                     untune.append(res_u.hyper_vol)
                     print 'Completed Run'+str(i)+': HV='+str(res_u.hyper_vol)
                     untune_spread.append(res_u.spread)
-                with open('img/'+run_name+'.lst', 'wb') as file:
+                with open('outputs/'+run_name+'.lst', 'wb') as file:
                     pickle.dump(untune, file)
-                with open('data/'+run_name+'_spread.lst', 'wb') as file:
+                with open('outputs/'+run_name+'_spread.lst', 'wb') as file:
                     pickle.dump(untune_spread, file)

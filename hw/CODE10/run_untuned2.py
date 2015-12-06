@@ -19,7 +19,8 @@ if __name__ == '__main__':
                     res_u = ga_u.run()
                     untune.append(res_u.hyper_vol)
                     untune_spread.append(res_u.spread)
-                with open(run_name+'.lst', 'wb') as file:
+                    print 'Completed Run'+str(i)+': HV='+str(res_u.hyper_vol)
+                with open('outputs/'+run_name+'.lst', 'wb') as file:
                     pickle.dump(untune, file)
-                with open(run_name+'_spread.lst', 'wb') as file:
+                with open('outputs/'+run_name+'_spread.lst', 'wb') as file:
                     pickle.dump(untune_spread, file)
