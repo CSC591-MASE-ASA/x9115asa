@@ -7,7 +7,7 @@ if __name__ == '__main__':
     models = [dtlz.dtlz5]
     objs = [2, 4, 6, 8]
     decs = [10, 20, 40]
-    lower = [0.01, 20, 500]
+    lower = [0.01, 20, 200]
     upper = [0.5, 100, 700]
     for model in models:
         for num_objs in objs:
@@ -19,7 +19,7 @@ if __name__ == '__main__':
                 print 'DE Runs Completed, Params are: '+str(ga_params)
                 print run_name
                 for i in xrange(20):
-                    ga_t = GA(model, num_objs, num_decs, *tm)
+                    ga_t = GA(model, num_objs, num_decs, *ga_params)
                     res_t = ga_t.run()
                     print 'Completed Run'+str(i)+': HV='+str(res_t.hyper_vol)
                     tune.append(res_t.hyper_vol)

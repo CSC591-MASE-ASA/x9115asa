@@ -25,8 +25,8 @@ class Tuner_Model(Model):
 def differential_evolution(model = Tuner_Model()):
         cr = 0.3
         f = 0.5
-        kmax=5
-        np = 5
+        kmax=2
+        np = 20
         seed = model.get_decision()
         def mutate(these):
             sn=[]
@@ -63,8 +63,10 @@ def differential_evolution(model = Tuner_Model()):
         frontier = create_frontier(seed)
         sb = seed
         eb = model.energy(seed)
-        #print 'Best energy so far: '+str(eb)
-        #print 'Best solution so far: '+str(sb)
+        print eb
+        print 'Best energy so far: '+str(eb)
+        print 'Best solution so far: '+str(sb)
+        no_change=0
         for k in xrange(kmax):
             for i,candidate in enumerate(frontier):
                 e = model.energy(candidate)
@@ -74,9 +76,12 @@ def differential_evolution(model = Tuner_Model()):
                 if en > e:
                     frontier[i] = sn
                 if en > eb:
+                    no_change=0
                     sb, eb = sn, en
-                #print 'Best energy so far: '+str(eb)
-                #print 'Best solution so far: '+str(sb)
+                if eb > 0.999 and no_change > 10:
+                    return sb
+                print 'Best energy so far: '+str(eb)
+                print 'Best solution so far: '+str(sb)
         return sb
 
 
@@ -87,8 +92,8 @@ def main():
     models = [dtlz.dtlz1, dtlz.dtlz3, dtlz.dtlz5, dtlz.dtlz7]
     objs = [2, 4, 6, 8]
     decs = [10, 20, 40]
-    lower = [0.01, 20, 500]
-    upper = [0.5, 100, 700]
+    lower = [0.01, 20, 100]
+    upper = [0.5, 30, 200]
     rdiv_ip=[]
     for model in models:
         for num_objs in objs:

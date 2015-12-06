@@ -6,18 +6,22 @@ class Result:
         self.spread = spread
 
 class HVE:
-    def __init__(self):
+    def __init__(self, num_cans, num_gen):
         self.generations = []
         self.hyper_vol=0
         self.spread=[]
+        self.num_candidates=num_cans
+        self.num_generations=num_gen
 
     def add_data(self, generation):
         self.generations.append(generation)
     
     def pareto_last(self, pf):
-        frontier = self.generations[len(self.generations)-1]
         fron_cans = pf
-        num_cans = 100000
+        num_cans = self.num_candidates*self.num_generations
+        if len(pf) == 0:
+            return Result(1, [])
+        #print fron_cans
         #for i in range(0, num_cans):
         #    rand_num1 = random.randint(0, len(frontier.candidates)-1)
         #    ran_fron = fron_cans[rand_num1]
