@@ -5,27 +5,6 @@ import hve
 import sys
 import sk
 
-def product(arr):
-    mul = 1
-    for i in range(0, len(arr)):
-        mul *= arr[i]
-    return mul
-
-def GCD(a,b):
-	a = abs(a)
-	b = abs(b)
-        while a:
-                a, b = b%a, a
-        return b
-
-def GCD_List(list):
-	return reduce(GCD, list)
-
-def LCM_List(list):
-    prod = product(list)
-    lcm = prod / GCD_List(list)
-    return lcm
-
 class candidate:
     num_objs = 10
 
@@ -34,10 +13,12 @@ class candidate:
         self.fitness = None
         self.dom_count = 0
 
+    # Calculate fitness of this candidate based on passed in fitness_family
     def calc_fitness(self, fitness_family):
         self.fitness = fitness_family(self.decs, self.num_objs, len(self.decs))
         return
 
+    # Binary domination
     def __gt__(self, other):
         better = any([x < y for x,y in zip(self.fitness, other.fitness)])
         worse = any([x > y for x,y in zip(self.fitness, other.fitness)])
@@ -46,7 +27,7 @@ class candidate:
     def __repr__(self):
         return ",".join([str(x) for x in self.decs])
 
-
+# Population is a collection of candidates and has the GA operations
 class population:
     num_candidates = 10;
     fitness_family = None
@@ -58,6 +39,7 @@ class population:
         self.num_candidates = num_candidates
         self.fitness_family = fitness_family
 
+    # Initialize first generation
     def randomize(self):
         for i in range(self.num_candidates):
             can = candidate([])
@@ -67,6 +49,7 @@ class population:
             self.candidates.append(can)
         self.ap_binary_dom()
 
+    # Cross over using random cross over point
     def crossover(self, candidate1, candidate2):
         crossover_point = random.randrange(0, self.num_decs)
         decs1 = []
@@ -86,6 +69,7 @@ class population:
     def select(self):
         return self.weighted_wheel()
 
+    # Mutate every bit with random probably
     def mutate(self, candidate):
         for i in range(0, self.num_decs):
             if random.random() < self.prob_mut:
@@ -95,6 +79,7 @@ class population:
     def __repr__(self):
         return ",".join([can.__repr__() for can in self.candidates])
 
+    # All pairs binary domination, dom_count is the number of other candidates a candidate dominates
     def ap_binary_dom(self):
         candidates = self.candidates
         n = self.num_candidates
@@ -106,8 +91,8 @@ class population:
                 if candidates[i] > candidates[j]:
                     candidates[i].dom_count += 1
 
+    # weighted wheel technique of selection based on dom_count
     def weighted_wheel(self):
-        # weighted wheel technique of selection
         sumTemp = sum([x.dom_count for x in self.candidates])
         if sumTemp == 0:
             return self.candidates[random.randint(0, self.num_candidates-1)]
@@ -118,6 +103,7 @@ class population:
             if rand < sumT:
                 return self.candidates[i]
 
+# This class drives the GA algorithm
 class GA:
     fitness_family = None
     num_candidates = 100
@@ -154,47 +140,11 @@ class GA:
         self.current_generation += 1
         return
 
-    def statistics(self):
-        curr_pop = self.generations[self.current_generation];
-        best_fitness = sum(curr_pop.candidates[0].fitness)
-        worst_fitness = sum(curr_pop.candidates[0].fitness)
-        sum_fitness = 0
-        for i in range(0, self.num_candidates):
-            if(sum(curr_pop.candidates[i].fitness) < best_fitness):
-                best_fitness = sum(curr_pop.candidates[i].fitness)
-            if(sum(curr_pop.candidates[i].fitness) > worst_fitness):
-                worst_fitness = sum(curr_pop.candidates[i].fitness)
-            sum_fitness += sum(curr_pop.candidates[i].fitness)
-        strStats = ""
-        strStats += str(best_fitness) + ","
-        strStats += str(worst_fitness) + ","
-        strStats += str(sum_fitness / self.num_candidates)
-        print strStats
-        return
-
-    def skdata(self):
-		if self.current_generation % 100 != 99:
-			return
-		genStr = ""
-		genStr += "gen" + str((self.current_generation+1)/100) + " "
-		for pop in range(self.current_generation - 99, self.current_generation+1):
-			curr_pop = self.generations[pop]
-			for i in range(0, self.num_candidates):
-				genStr += str(curr_pop.candidates[i].fitness[0]) + " "
-		print genStr
-		return
-
     def hvdata(self, hveCurr):
         hveCurr.add_data(self.generations[self.current_generation])
     
-    def initFile(self):
-        return
-    
-    def writeToFile(self):
-        return
-    
     def calc_a12(self):
-        if self.current_generation % 99 != 0 or self.current_generation < 199:
+        if self.current_generation % 100 != 99 or self.current_generation < 199:
             return 0
         gen1 = []
         gen2 = []
@@ -208,14 +158,12 @@ class GA:
         return 1 if a12 > 0.56 else 0
     
     def run(self, num_generations=1000):
-        self.initFile()
         self.randomize()
         hveCurr = hve.HVE()
         num_lives = 5
         for i in range(0, num_generations):
             self.next()
             self.hvdata(hveCurr)
-            self.writeToFile()
             num_lives -= self.calc_a12()
             if num_lives == 0:
                 break
@@ -225,16 +173,6 @@ objs = [2,4,6,8]
 decs = [10,20,40]
 fitness_family = [dtlz.dtlz1, dtlz.dtlz3, dtlz.dtlz5, dtlz.dtlz7]
 ff_names = ["dtlz1", "dtlz3", "dtlz5", "dtlz7"]
-
-def init():
-    for num_objs in objs:
-        for num_decs in decs:
-            for ff in ff_names:
-                for i in range(0, num_objs):
-                    f = open('data/{0}-{1}-{2}-f{3}.dat'.format(num_objs, num_decs, ff, i), 'w')
-                    f.close()
-                f = open('data/{0}-{1}-{2}-fsum.dat'.format(num_objs, num_decs, ff), 'w')
-                f.close()
 
 def run_all():
     for num_objs in objs:
@@ -247,9 +185,8 @@ def run_all():
                 run_one_n_times(num_candidates=100, fitness_family=ff, num_objs=num_objs, num_decs=num_decs, num_generations=1000, filedes=filedes)
                 filedes.close()
                     
-def run_one_n_times(num_candidates, fitness_family, num_objs, num_decs, num_generations, filedes):
+def run_one_n_times(num_candidates, fitness_family, num_objs, num_decs, num_generations, filedes, num_runs=20):
     results = []
-    num_runs = 20
     for i in range(0, num_runs):
         sys.stderr.write("Run " + str(i) + "\n")
         ga = GA(num_candidates, fitness_family, num_objs, num_decs)
@@ -257,8 +194,6 @@ def run_one_n_times(num_candidates, fitness_family, num_objs, num_decs, num_gene
         results.append(hve_res)
     
     hyper_vols = [res.hyper_vol for res in results]
-#    print "Hypervolume: " + str(hyper_vols) + ""
-#    print "Spread: " + str([str(res.spread) for res in results])
     filedes.write("Hypervolume: " + str(hyper_vols) + "\n")
     filedes.write("Spread: " + str([str(res.spread) for res in results]) + "\n")
     
@@ -266,14 +201,13 @@ def run_one_n_times(num_candidates, fitness_family, num_objs, num_decs, num_gene
     hmax = max(hyper_vols)
     hmin = min(hyper_vols)
     dev = max([hmax-avg,avg-hmin])
-#    print "Hypervolume Deviation: " + str(avg) + "+-" + str(dev)
     filedes.write("Hypervolume Deviation: " + str(avg) + "+-" + str(dev) + "\n")
 
 ### Scripts
 
 ### Run one instance of GA 20 times. Results are collected in the file ga.txt
 #filedes = open("ga.txt", 'w')
-#run_one_n_times(num_candidates=25, fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10, num_generations=150, filedes=filedes)
+#run_one_n_times(num_candidates=25, fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10, num_generations=150, filedes=filedes, num_runs=20)
 
 #### Run one instance of GA
 #ga = GA(num_candidates=100, fitness_family=dtlz.dtlz1, num_objs=2, num_decs=10, prob_mut=0.05)
