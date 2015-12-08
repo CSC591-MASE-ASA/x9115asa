@@ -4,11 +4,11 @@
 This paper discusses the implementation of Genetic Algorithms, findings and reasonings behind making various implementation decisions. This implementation follows the semantics of GA wherein a new generation of candidates are created by selecting, crossovering and mutating the previous generation of candidates. The discussion of the findings investigates and shows evidences that GA is a strong candidate in the class of evolutionary algorithms.
 
 ### Introduction
-The basis of Genetic Algorithms is in selection of the fittest candidates and using them as a basis to produce a population of fitter candidates. The operations of selection, crossover and mutation mimic the biology process of evolution. Candidates inherit traits from their parents. If these traits help them survive and thrive, these candidates live on while unfit candidates die off. The population tends to become fitter due to this dying off and increased selection of fit candidates. (See concepts for detailed explanations of fitness).
+The basis of Genetic Algorithms is in selection of the fittest candidates and using them as a basis to produce a population of fitter candidates. The operations of selection, crossover and mutation mimic the biological process of evolution. Candidates inherit traits from their parents. If these traits help them survive and thrive, these candidates live on while unfit candidates die off. The population tends to become fitter due to this dying off and increased selection of fit candidates. (See concepts for detailed explanations of fitness).
 
 Genetic Algorithms, like most evolutionary algorithms are used to derive optimum candidates according to their fitness. Fitness may involve maximizing, minimizing, converging or a combination of these across multiple (possibly independant) objectives. For example a genetic algorithm could be used to optimize candidates based on height and weight, to be fit for track sports.
 
-In general, generations get progressively better and thus later generations of candidates are better (fitter) than previous generations.
+In general, generations get progressively better and thus later generations of candidates are better (fitter) than previous generations. This works even if the optimum soltution or even direction is unknown. GA can therefore be applied in such types of problems where optimum solution where even characteristics of optimum solution are unknown.
 
 #### Terms
 1. Candidates - An instance of a solution. A candidate has decisions and fitness
@@ -24,15 +24,15 @@ In general, generations get progressively better and thus later generations of c
 11. Binary domination - A candidate is said to binary dominate another candidate if its objective values are better in at least one instance and never worse
 
 ### Implementation
-Every run of GA consists of a population. A population is a list of generations in increasing chronological order. A generation is a list of candidates. Every candidates have some number of decisions and objectives (fitness). The number of decisions and objectives is fixed for every run of GA. The fitness of every candidate is calculated using DTLZ family of functions.
+Every run of GA consists of a population. A population is a list of generations in increasing chronological order. A generation is a list of candidates. Every candidate has some number of decisions and objectives (fitness). The number of decisions and objectives is fixed for every run of GA. The fitness of every candidate is calculated using DTLZ family of functions.
 
 In total there are 20 runs of GA for every combination of number of objectives (2,4,6,8), number of decisions (10,20,40) and dtlz family(dtlz1 , dtlz3, dtlz5, dtlz7). The measures of hypervolume and spread are reported and discussed for these runs.
 
-To compare the fitness of 2 candidates binary domination was used because fitness is a multi dimensional parameter. Every candidate has a number of decisions. These decision values are number in the continuous range of [0,1].
+To compare the fitness of 2 candidates binary domination was used because fitness is a multi dimensional parameter. These fitness values are derived by calculating DTLZ function values for the candidates decisions. Candidate decision values are number in the continuous range of [0,1].
 
 **GA operations**  
 1. **Selection** - To select 2 candidates from a generation to perform crossover, the weighted wheel method was used. Every candidate gets a share of the wheel proportional to how many other candidates it dominates. The wheel is then spun (a random number is generated) and the candidate on which it falls on, is selected. This method allows for selection of fitter candidates with increased probability while not needing to aggregate multi dimensional parameters since this method uses binary domination.  
-2. **Crossover** - Crossover between two candidates produces two children by choosing an arbitrary crossover point and copying over the decision values from the 1st half of the first candidate and 2nd half of the second candidate and vice versa. This produces 2 children who have a mixture of the decision values of their parents. This mixtureis one of the elements of introducing candidates with variation witha salt of it being favorable variation.  
+2. **Crossover** - Crossover between two candidates produces two children by choosing an arbitrary crossover point and copying over the decision values from the 1st half of the first candidate and 2nd half of the second candidate and vice versa. This produces 2 children who have a mixture of the decision values of their parents. This mixture is one of the elements of introducing candidates with variation with a salt of it being a favorable variation.  
 3. **Mutation** - With certain probability a decision of the candidate is mutated i.e. it's value is changed. Mutation also contributes to the variations needed by the new generation. This slight variation allows for candidates to be generated with most decisions being similar but only different in some.
 
 Pareto frontier is constructed using the last generation of GA, this being theoretically the best generation, since that's what the algorithm strives for. Using the last generation as base, the pareto front was built as follows
@@ -43,11 +43,9 @@ Pareto frontier is constructed using the last generation of GA, this being theor
   2. If the other candidate dominates the frontier candidate, swap
   3. If no relation, add the other candidate to the frontier
 
-Do this 100,000 times. At the end a pareto frontier is obtained. The validity of the pareto front is checked by counting how many good picks (case 1) versus total number of picks. It was found to be between 80%-95% in most cases.
+Do this 100,000 times. At the end a pareto frontier is obtained. The validity of the pareto front is checked by counting how many good picks (case 1) versus total number of picks. It was found to be good between 80%-95% in most cases.
 
-Once the pareto frontier is obtained, the hypervolume ratio is the ratio of candidates not in the pareto frontier to the total number of candidates.
-
-The spread of the frontier is a vector of objectives, the values of which are the difference between the 75th and 25th percentile of the values of that objective for every candidate in the frontier.
+Once the pareto frontier is obtained, the hypervolume ratio is the ratio of candidates not in the pareto frontier to the total number of candidates. The spread of the frontier is a vector of objectives, the values of which are the difference between the 75th and 25th percentile of the values of that objective for every candidate in the frontier.
 
 Early termination is implemented using a12 for every 2 eras of 100 generations each. Using the standard threshold of 0.56, if the a12 value of the 2 eras is more than 0.56 , the algorithm is terminated.
 
@@ -128,12 +126,12 @@ The reduction in hypervolume ratio with increase in number of objectives can be 
 Since the decisions are transformed into fitness by DTLZ, the number of decisions doesn't really affect GA. Fitness values produced by more decisions may be different but they still are able to drive GA to an optimum.
 
 #### Threats to validity
-The basis of the generations getting better is the selection mechanism used to choose fit candidates from a generation. The implemented selection mechanism chooses candidates by a weighted wheel given a share of the wheel proportional to the number of other candidates it dominates in the generation. It is possible that, since the overall generation gets better together and not individual candidates, that candidates don't really dominate any (or few) candidates in their respective generations. After a while, the selection will transform into uniform random in a generation and will start producing non-optimal candidates. This implementation has not found any evidence of this scenario because spread values conform between runs.
+The basis of the generations getting better is the selection mechanism used to choose fit candidates from a generation. The implemented selection mechanism chooses candidates by a weighted wheel given a share of the wheel proportional to the number of other candidates it dominates in the generation. It is possible that, since the overall generation gets better together and not individual candidates, that candidates don't really dominate any (or few) candidates in their respective generations. After a while, the selection will transform into uniform random select in a generation and will start producing non-optimal candidates. This implementation has not found any evidence of this scenario because spread values conform between runs.
 
 #### Future Work
 Binary domination is known to be questionable when dealing with number of objectives more than 2. Continuous domination could be used as method for comparing candidates based on their multi objective fitness. Binary domination, given it's binary decision decision making, will produce coarse grained outcomes with many candidates not being included in the pareto frontier. Continuous domination could finer outcomes allowing more candidates to be part of the pareto front will still maintaining low spread.
 
-An additional technique for selection could be to constructthe pareto frontier for every generation and picking candidates from it for consideration for the next generation. This technique could produce a more focused (less spread) pareto frontier especially when paired with continuous domination.
+An additional technique for selection could be to construct the pareto frontier for every generation and picking candidates from it for consideration for the next generation. This technique could produce a more focused (less spread) pareto frontier especially when paired with continuous domination.
 
 ### Conclusion
 Genetic Algorithm is a promising algorithm in the class of Evolutionary Algorithms. It works well with existing fitness models and can accept a variety of decisions and objectives. It scales well for large number of candidates. The results of GA are easy to analyse and improve upon.
