@@ -47,6 +47,7 @@ For DE runs we have used a max tries value of 2 and the initial candidate pool o
 #### Genetic Algorithm Runs
 
 Using the parameter list generated from the DE loop we are now in a position to run tuned GA for comparison with untuned GA. The GA program uses the following input parameters to run. <br />
+
 1. Optimizer: dtlz1, dtlz3, dtlz5 & dtlz7
 2. Number of objectives: 2/4/6/8
 3. Number of decisions: 10/20/40
@@ -218,7 +219,8 @@ The performance statistics for tuned vs untuned is shown below. Out of a total n
 | Tuned     | 39                             |
 | Untuned   | 9                              |
 
-The model wise performance for tuned vs untuned mode is shown below
+The model wise performance for tuned vs untuned mode is shown below.
+
 | Model     | Better HV (Tuned/Untuned)      |
 |-----------|--------------------------------|
 | dtlz1     | 9/3                            |
