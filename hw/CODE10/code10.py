@@ -25,7 +25,7 @@ class Tuner_Model(Model):
 def differential_evolution(model = Tuner_Model()):
         cr = 0.3
         f = 0.5
-        kmax=2
+        kmax=3
         np = 15
         seed = model.get_decision()
         def mutate(these):
