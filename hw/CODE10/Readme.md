@@ -91,6 +91,7 @@ def update_pareto(self, new_pareto):
 
 #### Result Generation and Analysis
 The below steps indicate how the result generation was performed. <br />
+
 1. Run the GA program 20 times for each mode of operation (tuned/untuned) and store the results as a list in a file. The file naming conventtion was 'model_noOfObj_noOfDecs_(t/u).lst' eg. dtlz1_o2_d10_t.lst
 2. Merge the lists generated in step 1 and create a list of lists.
 3. Use this as an input to the rdivDemo method.
