@@ -46,8 +46,7 @@ For DE runs we have used a max tries value of 2 and the initial candidate pool o
 
 #### Genetic Algorithm Runs
 
-Using the parameter list generated from the DE loop we are now in a position to run tuned GA for comparison with untuned GA.
-The GA program uses the following input parameters to run
+Using the parameter list generated from the DE loop we are now in a position to run tuned GA for comparison with untuned GA. The GA program uses the following input parameters to run. <br />
 1. Optimizer: dtlz1, dtlz3, dtlz5 & dtlz7
 2. Number of objectives: 2/4/6/8
 3. Number of decisions: 10/20/40
@@ -90,7 +89,7 @@ def update_pareto(self, new_pareto):
 ```
 
 #### Result Generation and Analysis
-The below steps indicate how the result generation was performed
+The below steps indicate how the result generation was performed. <br />
 1. Run the GA program 20 times for each mode of operation (tuned/untuned) and store the results as a list in a file. The file naming conventtion was 'model_noOfObj_noOfDecs_(t/u).lst' eg. dtlz1_o2_d10_t.lst
 2. Merge the lists generated in step 1 and create a list of lists.
 3. Use this as an input to the rdivDemo method.
